@@ -55,7 +55,7 @@ class Function(object):
         # Create the three axis: x, y and fitness
         x = np.linspace(upper, lower, samples)
         y = np.linspace(upper, lower, samples)
-        x,y = np.meshgrid(x,y)
+        x, y = np.meshgrid(x,y)
         fitness = np.empty([len(x), len(x[0])])
         for i in range(len(x)):
             for j in range(len(x[i])):
@@ -69,5 +69,7 @@ class Function(object):
         ax.set_xlabel("X")
         ax.set_ylabel("Y")
         ax.set_zlabel("Fitness")
+        # Make the 3d plot look like in www.sfu.ca/~ssurjano/
+        ax.view_init(30, 25)
 
         

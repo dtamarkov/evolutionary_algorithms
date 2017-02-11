@@ -38,7 +38,7 @@ class Beale(Function):
         # Return the value of the function
         return part1 + part2 + part3
     
-    def plot(self, d3=True, upper=0, lower=0,  samples=0):
+    def plot(self, d3=True, lower=-4.5, upper=4.5,  samples=1000):
         """
         Makes a 2d plot using the parent class.
         It creates an array of samples between the upper and lower bounds

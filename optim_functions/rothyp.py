@@ -39,7 +39,7 @@ class Rothyp(Function):
         # Return the function
         return res_sum
     
-    def plot(self, d3=True, lower=-10, upper=10, samples=1000):
+    def plot(self, d3=True, lower=-65.536, upper=65.536, samples=1000):
         """
         Makes a 2d plot using the parent class.
         It creates an array of samples between the upper and lower bounds
