@@ -53,9 +53,11 @@ class Function(object):
         from matplotlib import cm
 
         # Create the three axis: x, y and fitness
-        x = np.linspace(upper, lower, samples)
-        y = np.linspace(upper, lower, samples)
+        x = np.linspace(lower, upper, samples)
+        y = np.linspace(lower, upper, samples)
         x, y = np.meshgrid(x,y)
+        
+        # Calculate the fitness
         fitness = np.empty([len(x), len(x[0])])
         for i in range(len(x)):
             for j in range(len(x[i])):
@@ -65,10 +67,14 @@ class Function(object):
         fig = plt.figure()
         ax = fig.add_subplot(111, projection='3d')
         ax.plot_surface(x, y, fitness, cmap=cm.jet, linewidth=0)
+        
+        # Name each axis and add a title
         fig.suptitle(self.name + " 3d", fontsize=14)
         ax.set_xlabel("X")
         ax.set_ylabel("Y")
         ax.set_zlabel("Fitness")
+        ax.invert_yaxis()
+        ax.invert_xaxis()
         # Make the 3d plot look like in www.sfu.ca/~ssurjano/
         ax.view_init(30, 25)
 
