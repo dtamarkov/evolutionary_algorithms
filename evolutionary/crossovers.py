@@ -45,7 +45,7 @@ def simple_permutation(parents):
         """
         Private auxiliary function to minimize the code.
         It appends to a given parents the values that it doesn't
-        contain yet from the other parent.
+        contain yet from the other parent's tail.
         """
         return np.hstack((new_parent, [x for x in parent if x not in new_parent]))     
 
