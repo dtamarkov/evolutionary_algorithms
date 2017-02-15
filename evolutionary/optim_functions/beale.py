@@ -23,6 +23,11 @@ class Beale(Function):
         super(self.__class__, self).__init__("Beale")
     
     def evaluate(self, population):
+        
+        # Case of matrix
+        if len(population.shape) == 2:
+            return np.apply_along_axis(self.evaluate, 1, population)
+        
         # ensure population is 2 dimensiona
         assert len(population) == 2
         

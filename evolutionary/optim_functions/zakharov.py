@@ -23,8 +23,15 @@ class Zakharov(Function):
         super(self.__class__, self).__init__("Zakharov")
     
     def evaluate(self, population):
-        # Ensure the data types are correct
+        """
+        """
+        
+        # Check the var type of the population
         assert str(type(population)) == "<type 'numpy.ndarray'>"
+        
+        # Case of matrix
+        if len(population.shape) == 2:
+            return np.apply_along_axis(self.evaluate, 1, population)
 
         # Initialize vars
         sum1, sum2 = 0.0, 0.0

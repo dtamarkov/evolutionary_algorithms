@@ -28,6 +28,10 @@ class Rothyp(Function):
         # Check the var type of the population
         assert str(type(population)) == "<type 'numpy.ndarray'>"
         
+        # Case of matrix
+        if len(population.shape) == 2:
+            return np.apply_along_axis(self.evaluate, 1, population)
+        
         # Initialize vars
         res_sum = 0.0
                         

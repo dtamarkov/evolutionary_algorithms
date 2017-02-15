@@ -23,6 +23,15 @@ class Griewank(Function):
         super(self.__class__, self).__init__("Griewank")
     
     def evaluate(self, population):
+        """
+        """
+        # Check the var type of the population
+        assert str(type(population)) == "<type 'numpy.ndarray'>"
+        
+        # Case of matrix
+        if len(population.shape) == 2:
+            return np.apply_along_axis(self.evaluate, 1, population)
+        
         # Initialize vars
         add = 0.0
         mult = 1.0

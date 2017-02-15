@@ -31,7 +31,10 @@ class Ackley(Function):
         Population has to be a numpy array for this method to work.
         """
         # Check the var type of the population
-        assert str(type(population)) == "<type 'numpy.ndarray'>"
+        assert str(type(population)) == "<type 'numpy.ndarray'>" and len(population)>0
+        
+        if len(population.shape) > 1:
+            return np.apply_along_axis(self.evaluate, 1, population)
         
         # Initialize vars
         firstSum = 0.0

@@ -28,7 +28,14 @@ class Easom(Function):
         Population has to be a numpy array for this method to work.
         """
         # Check the var type of the population
-        assert str(type(population)) == "<type 'numpy.ndarray'>" and len(population)==2
+        assert str(type(population)) == "<type 'numpy.ndarray'>"
+        
+        # Case of matrix
+        if len(population.shape) == 2:
+            return np.apply_along_axis(self.evaluate, 1, population)
+        
+        # Check the var type of the population
+        assert len(population)==2
         
         # Make sintax closer to the source
         x1 = population[0]

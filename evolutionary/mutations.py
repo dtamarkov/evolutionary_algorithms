@@ -12,7 +12,7 @@ def pos_swapping(population, prob):
     two randomly sampled positions of the population
     """
     for row in population:
-        if np.random.uniform(0,1) < prob:
+        if np.random.uniform(0,1) <= prob:
             values = np.random.randint(len(row), size=2)
             row[values[0]], row[values[1]] = row[values[1]], row[values[0]]
     return population

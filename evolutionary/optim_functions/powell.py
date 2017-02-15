@@ -24,9 +24,13 @@ class Powell(Function):
         """
         Returns the fitness of a population using the Ackley function.
         Population has to be a numpy array for this method to work.
-        """
+        """     
         # Check the var type of the population
         assert str(type(population)) == "<type 'numpy.ndarray'>"
+        
+        # Case of matrix
+        if len(population.shape) == 2:
+            return np.apply_along_axis(self.evaluate, 1, population)
         
         # Initialize vars
         total_sum = 0.0

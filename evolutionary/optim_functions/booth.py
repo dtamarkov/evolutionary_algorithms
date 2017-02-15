@@ -18,6 +18,13 @@ class Booth(Function):
         super(self.__class__, self).__init__("Booth")
     
     def evaluate(self, population):
+        # Check the var type of the population
+        assert str(type(population)) == "<type 'numpy.ndarray'>"
+        
+        # Case of matrix
+        if len(population.shape) == 2:
+            return np.apply_along_axis(self.evaluate, 1, population)
+        
         # ensure population is 2 dimensional
         assert len(population) == 2
         
