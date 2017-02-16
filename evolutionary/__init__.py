@@ -1,7 +1,5 @@
 import optim_functions
-import mutations
-import selections
-import crossovers
-import initialization
+import evolution_strategies
+import genetic_algorithms
 
-__all__ = []
+__all__ = ["optim_functions", "evolution_strategies", "genetic_algorithms"]
