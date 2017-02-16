@@ -61,3 +61,31 @@ def one_point_permutation(parents, prob):
 
     # Return the generated children as a np array
     return parents
+
+def two_point(parents, prob):
+    """
+    The following method recieves a pair of parents and the probability
+    between [0,1] to apply the crossover function to them.
+    It randomly sample 2 integers between 0 and the number of dimensions of the 
+    parents. Then the two sub-arrays generated (one for each parent) are swapped
+    generating 2 children.
+    """
+      # Check the input var
+    assert len(parents)==2
+    
+    # Apply the crossover function with probability prob
+    if np.random.uniform(0,1) <= prob:
+        
+        # Sample the 2 crossover points randomly
+        cp1 = np.random.randint(len(parents[0]))
+        cp2 = np.random.randint(len(parents[0]))
+        
+        # Avoid that cp1 and cp2 are equal
+        while cp1 == cp2:
+            cp2 = np.random.randint(len(parents[0]))
+
+        # Recombine to generate their children
+        parents[0, cp1:cp2], parents[1, cp1:cp2] = parents[1, cp1:cp2], parents[0, cp1:cp2].copy()
+        
+        return parents
+        
