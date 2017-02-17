@@ -40,7 +40,7 @@ def tournament(population, fitness, N=5, M=2, iterations=1, minimize=False):
     return samples.reshape(M*iterations, len(population[0]))
 
 
-def wheel(population, fitness, N, M, replacement=True):
+def wheel(population, fitness, N, M, iterations=1, replacement=True):
     """
     """
     _check(len(population)>0 and len(population)==len(fitness))
@@ -57,5 +57,5 @@ def parent_replace(population, fitness, children):
     """
     _check(len(population)>0 and len(population)==len(fitness))
     
-    population[fitness.argsort()[-2:]] = children
+    population[fitness.argsort()[-len(children):]] = children
     return population

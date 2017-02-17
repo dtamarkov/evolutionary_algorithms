@@ -6,6 +6,7 @@
 
 import numpy as np
 
+
 def _check(assertion):
     """
     Fucntion to check that the population is bigger than 0, therefore it is
@@ -18,7 +19,8 @@ def _check(assertion):
         e.args += "The population cannot be an empty matrix"
         raise
 
-def pos_swapping(population, prob):
+        
+def pos_swap(population, prob):
     """
     Try to make a small change on the structure of the children by swapping 
     two randomly sampled positions of the population
@@ -31,31 +33,24 @@ def pos_swapping(population, prob):
             row[values[0]], row[values[1]] = row[values[1]], row[values[0]]
     return population
 
-# TODO change population object so it has [chromosome, sigma]
-def gaussian(population, prob, lower, upper, sigma):
-    _check(len(population)>0)
-    tau = 1/np.sqrt(len(population))
-    for i in range(len(population)):
-        sigma = max(sigma * np.exp(tau*np.random.normal(0, 1), 1e-10)
-        population[i] = population[i] + sigma*np.random.normal()
-        # verificar que estan entre los rangos especificados upper y lower
-        population[>upper] = upper
-        population[<lower] = lower
-            
-return population
 
-
-def not_uniform(population, prob, upper, lower, t, tmax, b=5):
+def non_uniform(population, prob, upper, lower, t, tmax, b=5):
     """
-    xj' = xj + tao * (uj - lj) * (1 - ui^(1-(t/tmax))^b 
+    xj' = xj + tau * (uj - lj) * (1 - ui^(1-(t/tmax))^b 
     """
     _check(len(population)>0)
     
-    to_mutate = np.random.uniform(0, 1, population.shape)
+    to_mutate = np.random.uniform(0, 1, population.shape)<=prob
+    
+    def f(value):
+        tau = upper-lower if np.random.uniform(0, 1, 1)>0.5 else lower-upper
+        snd_part = (1- np.random.uniform(0, 1, 1)**(1-t/tmax)**b)
+        return value + tau * snd_part
+    
     for i in range(len(population)):
         for j in range(len(population[i])):
-            if to_mutate[i,j] < prob:
-                while(upper < population[i, j] or lower > population[i, j]):
-                    tau = upper-lower if np.random.uniform(0, 1, 1)>0.5 else lower-upper
-                    population[i, j] = population[i, j] + tao * (1- np.random.uniform(0, 1, 1)**(1-t/tmax)**b)
+            if to_mutate[i, j]:
+                population[i, j] = f(population[i, j])
+    population[population>upper] = upper
+    population[population<lower] = lower
     return population
