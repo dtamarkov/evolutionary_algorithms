@@ -18,7 +18,13 @@ def _check(assertion, message):
     except AssertionError as e:
         e.args += message
         raise
-        
+
+def random_n(N, chromosomes):
+    #shuffle the parents to prevent any correlation
+    shuffle = np.arange(len(chromosomes))
+    np.random.shuffle(shuffle)
+    return shuffle[:N]
+
 def tournament(parents, fitness, N=5, M=2, iterations=1, minimize=True):
     """
     parents is an array of chromosomes
@@ -38,17 +44,24 @@ def tournament(parents, fitness, N=5, M=2, iterations=1, minimize=True):
 
     
     # Initialize the array that we will return
-    samples = np.array([])
+    indices = np.array([])
     for i in range(iterations):
-        random_parents = np.random.randint(len(parents), size=N)
+        
+        # Generate an array of random values to randomly select a subgroup of parents
+        random_parents = random_n(N, parents)
         if minimize:
-            samples = np.append(samples, parents[fitness[random_parents].argsort()[:M]])
+            idx = fitness[random_parents].argsort()[:M]
         else:
-            samples = np.append(samples, parents[fitness[random_parents].argsort()[-M:][::-1]])
-    return samples.reshape(M*iterations, len(parents[0]))
+            idx = fitness[random_parents].argsort()[-M:][::-1]
+            
+        indices = np.append(indices, random_parents[idx])
+
+    # Return the indices as an array of integers
+    indices = indices.astype(np.int64)
+    return parents[indices], indices
 
 
-def wheel(parents, fitness, N, M, iterations=1, replacement=True):
+def wheel(parents, fitness, N, M, iterations=1, replacement=True, minimize=True):
     """
     Wheel selection method. 
     parents is an array of chromosomes
@@ -67,67 +80,26 @@ def wheel(parents, fitness, N, M, iterations=1, replacement=True):
     _check(len(parents)==len(fitness), "len(parents) and len(fitness) are not the same")
            
     # Initialize vars
-    samples = np.array([])
+    indices = np.array([])
 
     # Loop iterations times
     for i in range(iterations):
         # Select N parents from the parents
-        random_parents = np.random.randint(len(parents), size=N)
-        
+        random_parents = random_n(N, parents)        
+
         # Calculate its probabilites
-        wheel_prob = fitness[random_parents]/ float(np.sum(fitness[random_parents]))
+        if minimize:
+            # Normalize the fitness matrix so it is suitable for a minimization problem
+            norm_fitness = np.absolute(fitness[random_parents]-np.max(fitness))
+            
+            # Compute the probabilities proportionaly to the fitness
+            wheel_prob = norm_fitness/ np.sum(norm_fitness)
+        else:
+            wheel_prob = fitness[random_parents]/ np.sum(fitness[random_parents])
 
-        # Sample M parents from random_parents with the calculated probabilities
-        samples = np.append(samples, parents[np.random.choice(np.arange(0, N), M, replace=replacement, p=wheel_prob)])
-
-    return samples.reshape(M*iterations, len(parents[0]))
+        # Sample M indices from random_parents with the calculated probabilities
+        indices = np.append(indices, random_parents[np.random.choice(np.arange(0, N), M, replace=replacement, p=wheel_prob)])
     
-def elitist(parents, pa_fitness, children, ch_fitness, M, elitism=0.5, replacement=True, minimize=True):
-    """
-    parents is the current chromosomes
-    pa_fitness is parents fitness value
-    children is the generated chromosomes
-    ch_fitness is children fitness value
-    M is the number of elements to select
-    """
-    _check(len(parents)>0, "The parents cannot be an empty matrix")
-    _check(len(parents)+len(children) >= M, "Number of survival chromosomes cannot be higher than the number of parents and children")
-    _check(len(parents)==len(pa_fitness), "len(parents) and len(pa_fitness) are not the same")
-    _check(len(children)==len(ch_fitness), "len(children) and len(ch_fitness) are not the same")
-    
-    chromosomes = np.vstack((parents, children))
-    fitness = np.hstack((pa_fitness, ch_fitness))
-    
-    n_elitist = int(np.ceil(M*elitism))
-    n_rest = int(M-n_elitist)
-    fitness_scaled = fitness - np.min(fitness)
-    if np.sum(fitness_scaled)<1e-15:
-        fitness_prob = np.ones(fitness.shape)*(1.0/len(fitness))
-    else:
-        fitness_prob = fitness_scaled/np.sum(fitness_scaled)
-
-    rest_chromosomes = chromosomes[np.random.choice(np.arange(0,len(chromosomes)), n_rest, replace=replacement, p=fitness_prob)]
-    
-    if minimize:
-        elitist_chromosomes = chromosomes[fitness.argsort()[:n_elitist]]
-    else:
-        elitist_chromosomes = chromosomes[fitness.argsort()[-n_elitist:][::-1]]
-        
-    final_chromosomes = np.vstack((elitist_chromosomes, rest_chromosomes))
-    shuffle = np.arange(len(final_chromosomes))
-    np.random.shuffle(shuffle)
-    return final_chromosomes[shuffle]
-    
-def parent_replace(parents, fitness, children, minimize=True):
-    """
-    Select the N worst fitness, where N is the number of children, out of the population 
-    and change them for the new generated children
-    """
-    _check(len(parents)>0, "The population cannot be an empty matrix")
-    _check(len(parents)==len(fitness), "len(parents) and len(pa_fitness) are not the same")
-
-    if worst:
-        parents[fitness.argsort()[-len(children):][::-1]] = children
-    else:
-        parents[fitness.argsort()[:len(children)]] = children
-    return parents
+    # Return the indices as an array of integers
+    indices = indices.astype(np.int64)
+    return parents[indices], indices

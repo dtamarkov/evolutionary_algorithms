@@ -13,9 +13,9 @@ def uniform(n_population, lower, upper, N):
     using the given uniform distribution.
     A number N of samples are generated between the lower(L) and upper(U) bounds.
     """
-    population = [np.random.uniform(lower, upper, N)]
-    for i in range(n_population-1):
-        population = np.concatenate((population, [np.random.uniform(lower, upper, N)]))
+    population = [np.random.uniform(lower[0], upper[0], N)]
+    for i in range(1, n_population):
+        population = np.concatenate((population, [np.random.uniform(lower[i], upper[i], N)]))
     return population
 
 def permutation(n_population, N):

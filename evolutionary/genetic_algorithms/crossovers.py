@@ -7,7 +7,7 @@
 from __future__ import division
 import numpy as np
 
-def _check(assertion, parents):
+def _check(assertion, message, parents):
     """
     Fucntion to check that the population is bigger than 0, therefore it is
     not an empty matrix.
@@ -16,15 +16,14 @@ def _check(assertion, parents):
     try:
         assert assertion
     except AssertionError as e:
-        e.args += "The population cannot be an empty matrix"
+        e.args += message
         raise
     
     #shuffle the parents to prevent any correlation
     shuffle = np.arange(len(parents))
     np.random.shuffle(shuffle)
     parents = parents[shuffle]
-    
-        
+     
     # In case the length of the parents is not 2*n we remove the last element
     if len(parents)%2 != 0:
         parents = parents[:-1]
@@ -40,7 +39,7 @@ def one_point(parents, prob=1):
     """
 
     # Check the input var and shuffle the elements
-    parents = _check(len(parents)>0, parents)
+    parents = _check(len(parents)>0, "The population cannot be an empty matrix", parents)
         
     # Iterate over the parents taking them two by two and store the generated children
     for i in range(0, len(parents), 2):
@@ -106,7 +105,7 @@ def two_point(parents, prob):
     """
     
     # Check the input var and shuffle the elements
-    parents = _check(len(parents)>0, parents)
+    parents = _check(len(parents)>0, "The population cannot be an empty matrix", parents)
     
     # Iterate over the parents taking them two by two and store the generated children
     for i in range(0, len(parents), 2):
@@ -130,4 +129,44 @@ def two_point(parents, prob):
             parents[i, cp1:cp2], parents[i+1, cp1:cp2] = parents[i+1, cp1:cp2], parents[i, cp1:cp2].copy()
 
     return parents
+
+def blend(parents, prob, upper, lower, alpha=0.5):
+    """
+    The following method applies a blend crossover to a matrix of chromosomes.
+    
+    parents is the chromosomes matrix to apply the function
+    prob is the probability to apply the recombination
+    upper and lower are the upper and lower bounds of the population
+    alpha is the parameter used for blend recombination
+    """
+    
+    # Check the input var and shuffle the elements
+    parents = _check(len(parents)>0, "The population cannot be an empty matrix", parents)
+            
+    # Iterate over the parents taking them two by two and store the generated children
+    for i in range(0, len(parents), 2):
+        
+        # Recombine a pair of parents with probability prob
+        if np.random.uniform(0, 1) <= prob:
+        
+            # Calculate the value of gamma
+            gamma = (1. + 2.*alpha) * np.random.uniform(0, 1) - alpha
+            # Generate the children and store them
+            parents[i], parents[i+1] = (1-gamma)*parents[i] + gamma*parents[i+1], ((1-gamma)*parents[i+1] + gamma*parents[i]).copy()
+    
+    # Fix the chromosomes values that are out of bounds. First create a mask
+    # set the masked chromosome values to 0, create a matrix with the value of the
+    # bounds where the mask is 1 (true) and zero in the rest, at the end add the new
+    # matrix to the parents 
+    out = parents>upper
+    parents[out] = 0
+    parents += out.astype(int)*upper
+    out = parents<lower
+    parents[out] = 0
+    parents += out.astype(int)*lower
+        
+    # Return the generated children
+    return parents
+            
+            
         

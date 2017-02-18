@@ -16,7 +16,7 @@ class Ackley(Function):
     to be trapped in one of its many local minima. 
     (Source: https://www.sfu.ca/~ssurjano/ackley.html)
     """
-    def __init__(self, a=False, b=False, c=False):
+    def __init__(self, lower=-32, upper=32, a=False, b=False, c=False):
         """
         Initialize the Ackley class with the values of a, b and c
         """
@@ -24,7 +24,9 @@ class Ackley(Function):
         self.a = 20 if not a else a
         self.b = 0.2 if not b else b
         self.c = 2 * np.pi if not c else c
-    
+        self.lower = lower
+        self.upper = upper
+        
     def evaluate(self, population):
         """
         Returns the fitness of a population using the Ackley function.
@@ -49,14 +51,14 @@ class Ackley(Function):
         # Return the function
         return -self.a*np.exp(-self.b*np.sqrt(firstSum/n)) - np.exp(secondSum/n) +  self.a + np.e
     
-    def plot(self, d3=True, lower=-32, upper=32, samples=1000):
+    def plot(self, d3=True, samples=1000):
         """
         Makes a 2d/3d (regarding the d3 var) plot using the parent classes.
         It creates an array of samples between the upper and lower bounds
         and compute its fitness which will be plotted together.
         """
         if d3:
-            super(self.__class__, self).plot3d(lower, upper, samples)
+            super(self.__class__, self).plot3d(self.lower, self.upper, samples)
         else:
-            super(self.__class__, self).plot(lower, upper, samples)
+            super(self.__class__, self).plot(self.lower, self.upper, samples)
         
