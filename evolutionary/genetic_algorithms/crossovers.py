@@ -4,6 +4,7 @@
     @date: Feb - 2017
 """
 
+from __future__ import division
 import numpy as np
 
 def _check(assertion, parents):

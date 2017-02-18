@@ -3,7 +3,7 @@
     @Personal_page: http://giga.cps.unizar.es/~mlagunas/
     @date: Feb - 2017
 """
-
+from __future__ import division
 import numpy as np
 
 def uniform(n_population, lower, upper, N):
