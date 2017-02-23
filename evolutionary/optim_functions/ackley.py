@@ -16,7 +16,7 @@ class Ackley(Function):
     to be trapped in one of its many local minima. 
     (Source: https://www.sfu.ca/~ssurjano/ackley.html)
     """
-    def __init__(self, lower=-32, upper=32, a=False, b=False, c=False):
+    def __init__(self, lower=-32, upper=32, a=False, b=False, c=False, minimize=True):
         """
         Initialize the Ackley class with the values of a, b and c
         """
@@ -26,6 +26,7 @@ class Ackley(Function):
         self.c = 2 * np.pi if not c else c
         self.lower = lower
         self.upper = upper
+        self.minimize = minimize
         
     def evaluate(self, population):
         """
@@ -49,8 +50,10 @@ class Ackley(Function):
             secondSum += np.cos(2.0*self.c*i)
 
         # Return the function
-        return -self.a*np.exp(-self.b*np.sqrt(firstSum/n)) - np.exp(secondSum/n) +  self.a + np.e
-    
+        if self.minimize:
+            return -self.a*np.exp(-self.b*np.sqrt(firstSum/n)) - np.exp(secondSum/n) +  self.a + np.e
+        else:
+            return -(-self.a*np.exp(-self.b*np.sqrt(firstSum/n)) - np.exp(secondSum/n) +  self.a + np.e)
     def plot(self, d3=True, samples=1000):
         """
         Makes a 2d/3d (regarding the d3 var) plot using the parent classes.

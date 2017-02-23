@@ -10,9 +10,9 @@ U = np.random.uniform
 
 def _check(assertion, message):
     """
-    Fucntion to check that the population is bigger than 0, therefore it is
-    not an empty matrix.
-    If it doesn't pass the assertion it raises an exception.
+    :param assertion: test parameter, it is a boolean
+    :param message: message to show in case assertion is equal to False
+    :return: raise an exception if the assrtion is false
     """
     try:
         assert assertion
@@ -23,8 +23,10 @@ def _check(assertion, message):
         
 def pos_swap(chromosomes, prob):
     """
-    Try to make a small change on the structure of the children by swapping 
-    two randomly sampled positions of the population
+
+    :param chromosomes:
+    :param prob:
+    :return:
     """
     _check(len(chromosomes)>0, "The population cannot be an empty matrix")
     
@@ -45,8 +47,12 @@ def pos_swap(chromosomes, prob):
 
 def uniform(chromosomes, prob, upper, lower):
     """
-    Try to make a small change on the structure of the children by swapping 
-    two randomly sampled positions of the population
+
+    :param chromosomes:
+    :param prob:
+    :param upper:
+    :param lower:
+    :return:
     """
     _check(len(chromosomes)>0, "The population cannot be an empty matrix")
     
@@ -66,24 +72,33 @@ def uniform(chromosomes, prob, upper, lower):
     # Iterate over each value of the chromosomes
     for i in range(len(chromosomes)):
         for j in range(len(chromosomes[i])):
-            # pre-compute the value after the mutation
-            aux = chromosomes[i, j] + (U(0, 1)-0.5)*0.5*(upper[i, j]-lower[i, j])
-            
-            # check that the pre-computed mutation is between the lower and upper bounds. 
-            # repeat the process if it is not
-            while (lower[i, j] > aux or upper[i, j] < aux):
+            # Check if we need to mutate
+            if to_mutate[i, j]:
+                # pre-compute the value after the mutation
                 aux = chromosomes[i, j] + (U(0, 1)-0.5)*0.5*(upper[i, j]-lower[i, j])
+
+                # check that the pre-computed mutation is between the lower and upper bounds.
+                # repeat the process if it is not
+                while (lower[i, j] > aux or upper[i, j] < aux):
+                    aux = chromosomes[i, j] + (U(0, 1)-0.5)*0.5*(upper[i, j]-lower[i, j])
                 
-            # once the mutation is between the problem bounds assign it to the chromosomes value
-            chromosomes[i, j] = aux
+                # once the mutation is between the problem bounds assign it to the chromosomes value
+                chromosomes[i, j] = aux
             
     # return the new generated chromosomes
     return chromosomes
     
 def non_uniform(chromosomes, prob, upper, lower, t, tmax, b=5.):
     """
-    TODO: check implementation
-    xj' = xj + tau * (uj - lj) * (1 - ui^(1-(t/tmax))^b 
+
+    :param chromosomes:
+    :param prob:
+    :param upper:
+    :param lower:
+    :param t:
+    :param tmax:
+    :param b:
+    :return:
     """
     _check(len(chromosomes)>0, "The population cannot be an empty matrix")
     
@@ -101,6 +116,13 @@ def non_uniform(chromosomes, prob, upper, lower, t, tmax, b=5.):
     to_mutate = U(0, 1, chromosomes.shape)<prob
     
     def f(value, i, j):
+        """
+
+        :param value:
+        :param i:
+        :param j:
+        :return:
+        """
         tau = upper[i, j]-lower[i, j] if U(0, 1)>0.5 else lower[i, j]-upper[i, j]
         snd_part = (1.-U(0, 1)**((1.-t/tmax)**b))
         return value + tau * snd_part
@@ -112,4 +134,5 @@ def non_uniform(chromosomes, prob, upper, lower, t, tmax, b=5.):
                 while (lower[i, j] > aux or upper[i, j] < aux):
                     aux = f(chromosomes[i, j], i, j)
                 chromosomes[i, j] = aux
+
     return chromosomes

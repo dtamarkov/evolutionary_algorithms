@@ -152,7 +152,8 @@ def blend(parents, prob, upper, lower, alpha=0.5):
             # Calculate the value of gamma
             gamma = (1. + 2.*alpha) * np.random.uniform(0, 1) - alpha
             # Generate the children and store them
-            parents[i], parents[i+1] = (1-gamma)*parents[i] + gamma*parents[i+1], ((1-gamma)*parents[i+1] + gamma*parents[i]).copy()
+            parents[i], parents[i+1] = (1-gamma)*parents[i] + gamma*parents[i+1], \
+                                       ((1-gamma)*parents[i+1] + gamma*parents[i]).copy()
     
     # Fix the chromosomes values that are out of bounds. First create a mask
     # set the masked chromosome values to 0, create a matrix with the value of the

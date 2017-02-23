@@ -5,6 +5,8 @@
 """
 from __future__ import division
 import numpy as np
+import ga_tools as ga_tools
+
 
 def _check(assertion, message):
     """
@@ -19,11 +21,13 @@ def _check(assertion, message):
         e.args += message
         raise
 
+
 def random_n(N, chromosomes):
-    #shuffle the parents to prevent any correlation
+    # shuffle the parents to prevent any correlation
     shuffle = np.arange(len(chromosomes))
     np.random.shuffle(shuffle)
     return shuffle[:N]
+
 
 def tournament(parents, fitness, N=5, M=2, iterations=1, minimize=True):
     """
@@ -39,21 +43,17 @@ def tournament(parents, fitness, N=5, M=2, iterations=1, minimize=True):
     finally it returns their genes
     """
     # Check that population>0
-    _check(len(parents)>0, "The population cannot be an empty matrix")
-    _check(len(parents)==len(fitness), "len(population) and len(fitness) are not the same")
+    _check(len(parents) > 0, "The population cannot be an empty matrix")
+    _check(len(parents) == len(fitness), "len(population) and len(fitness) are not the same")
 
-    
     # Initialize the array that we will return
     indices = np.array([])
     for i in range(iterations):
-        
-        # Generate an array of random values to randomly select a subgroup of parents
+
+        # Select a subgroup of parents
         random_parents = random_n(N, parents)
-        if minimize:
-            idx = fitness[random_parents].argsort()[:M]
-        else:
-            idx = fitness[random_parents].argsort()[-M:][::-1]
-            
+        idx = ga_tools.n_sort(fitness, M, minimize)
+
         indices = np.append(indices, random_parents[idx])
 
     # Return the indices as an array of integers
@@ -61,45 +61,29 @@ def tournament(parents, fitness, N=5, M=2, iterations=1, minimize=True):
     return parents[indices], indices
 
 
-def wheel(parents, fitness, N, M, iterations=1, replacement=True, minimize=True):
+def wheel(parents, fitness, M, replacement=True, minimize=True):
     """
-    Wheel selection method. 
-    parents is an array of chromosomes
-    fitness is the chromosomes fitness
-    N is the number of parents randomly sampled from population
-    M is the number of parents sampled with the wheel selection
-    iterations is the number of times we sample M parents using the wheel method
-    replacement is a boolean either to sample with or without replacement
-    
-    The wheel selection method assigns a probability of parent_fitness/sum(fitness) to
-    a subgroup of N parents from the population. Then using this probabilities it samples M
-    parents of the subgroup. This is repeated iterations times. The M*iterations parents 
-    that have been sampled are returned.
+    The wheel selection method sample M parents from the population. Each chromosome has a
+    probability to be sampled equivalent to be the value of its fitness.
+
+    :param parents: array of chromosomes
+    :param fitness: fitness value of each chromosome
+    :param M: number of elements to sample
+    :param replacement: sample with replacement or not (boolean)
+    :param minimize: minimization problem or maximization (boolean)
+    :return: the sampled chromosomes and its index in the global matrix of chromosomes
     """
-    _check(len(parents)>0, "The parents cannot be an empty matrix")
-    _check(len(parents)==len(fitness), "len(parents) and len(fitness) are not the same")
-           
-    # Initialize vars
-    indices = np.array([])
+    _check(len(parents) > 0, "The parents cannot be an empty matrix")
+    _check(len(parents) == len(fitness), "len(parents) and len(fitness) are not the same")
 
-    # Loop iterations times
-    for i in range(iterations):
-        # Select N parents from the parents
-        random_parents = random_n(N, parents)        
+    # Get the probabilities of each chromosome
+    wheel_prob = ga_tools.wheel_prob(fitness, minimize)
 
-        # Calculate its probabilites
-        if minimize:
-            # Normalize the fitness matrix so it is suitable for a minimization problem
-            norm_fitness = np.absolute(fitness[random_parents]-np.max(fitness))
-            
-            # Compute the probabilities proportionaly to the fitness
-            wheel_prob = norm_fitness/ np.sum(norm_fitness)
-        else:
-            wheel_prob = fitness[random_parents]/ np.sum(fitness[random_parents])
+    # print fitness[random_parents], wheel_prob, np.sum(wheel_prob)
+    # Sample M indices from random_parents with the calculated probabilities
+    indices = np.random.choice(np.arange(0, len(fitness)),
+                                                   M, replace=replacement, p=wheel_prob)
 
-        # Sample M indices from random_parents with the calculated probabilities
-        indices = np.append(indices, random_parents[np.random.choice(np.arange(0, N), M, replace=replacement, p=wheel_prob)])
-    
     # Return the indices as an array of integers
     indices = indices.astype(np.int64)
     return parents[indices], indices
