@@ -16,7 +16,7 @@ class Ackley(Function):
     to be trapped in one of its many local minima. 
     (Source: https://www.sfu.ca/~ssurjano/ackley.html)
     """
-    def __init__(self, lower=-32, upper=32, a=False, b=False, c=False, minimize=True):
+    def __init__(self, lower=-32., upper=32., a=False, b=False, c=False, minimize=True):
         """
         Initialize the Ackley class with the values of a, b and c
         """

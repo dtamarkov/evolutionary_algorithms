@@ -33,7 +33,8 @@ def elitist(parents, pa_fitness, children, ch_fitness, M, elitism=0.5, replaceme
     _check(len(parents)+len(children) >= M, "Number of survival chromosomes cannot be higher than the number of parents and children")
     _check(len(parents)==len(pa_fitness), "len(parents) and len(pa_fitness) are not the same")
     _check(len(children)==len(ch_fitness), "len(children) and len(ch_fitness) are not the same")
-    
+    _check(elitism>=0 and elitism<=1, "elitism must be between 0 and 1")
+
     # Gather the parents and children and its fitness
     chromosomes = np.vstack((parents, children))
     fitness = np.hstack((pa_fitness, ch_fitness))
@@ -48,22 +49,26 @@ def elitist(parents, pa_fitness, children, ch_fitness, M, elitism=0.5, replaceme
     else:
         # Calculate its probabilites
         fitness_prob = ga_tools.wheel_prob(fitness, minimize)
-        
+
+
     # Get the non elitist part of the chromosomes with a probability proportional
     # to the value of the fitness
     rest_chromosomes = chromosomes[np.random.choice(np.arange(0, len(chromosomes)), n_rest, replace=replacement, p=fitness_prob)]
 
+    # get the elitist chromosomes
     elitist_chromosomes = chromosomes[ga_tools.n_sort(fitness, n_elitist, minimize)]
 
+    # print  "rest", rest_chromosomes
+    # print "elitist", elitist_chromosomes
     # Group the elitist and the rest of the chromosomes together
-    final_chromosomes = np.vstack((elitist_chromosomes, rest_chromosomes))
+    final_chromosomes = np.vstack((rest_chromosomes, elitist_chromosomes))
     
     # Shuffle the final matrix to avoid groups of elitist
-    shuffle = np.arange(len(final_chromosomes))
-    np.random.shuffle(shuffle)
+    # shuffle = np.arange(len(final_chromosomes))
+    # np.random.shuffle(shuffle)
     
     # Return the shuffled array
-    return final_chromosomes[shuffle]
+    return final_chromosomes
     
 def parent_replace(parents, fitness, children, minimize=True):
     """

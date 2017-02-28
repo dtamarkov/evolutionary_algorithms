@@ -142,7 +142,12 @@ def blend(parents, prob, upper, lower, alpha=0.5):
     
     # Check the input var and shuffle the elements
     parents = _check(len(parents)>0, "The population cannot be an empty matrix", parents)
-            
+
+    # In case the length of the parents is not 2*n we remove the last element
+    if len(upper)%2 != 0:
+        upper = upper[:-1]
+        lower = lower[:-1]
+
     # Iterate over the parents taking them two by two and store the generated children
     for i in range(0, len(parents), 2):
         
