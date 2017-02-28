@@ -25,11 +25,11 @@ np.random.seed(82634)
 minimization = True
 
 # Define the problem to solve and get its fitness function
-problem = functions.Ackley(minimize=minimization)
+problem = functions.Beale(minimize=minimization)
 fitness_function = problem.evaluate
 
 # Initalize vars
-n_dimensions = 10
+n_dimensions = 2
 n_population = 100
 n_iterations = 1000
 n_children = n_population

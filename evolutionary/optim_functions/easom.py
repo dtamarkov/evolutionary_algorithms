@@ -4,10 +4,11 @@
     @date: Feb - 2017
 """
 
-from .functions import Function
 import numpy as np
 
-#################################################################        
+from .functions import Function
+
+
 class Easom(Function):
     """    
     The Easom function has several local minima. 
@@ -16,36 +17,40 @@ class Easom(Function):
     global minima at (pi,pi)
     (Source: https://www.sfu.ca/~ssurjano/ackley.html)
     """
-    def __init__(self, lower=-100., upper=100., a=False, b=False, c=False):
+
+    def __init__(self, lower=-100., upper=100., minimize=True):
         """
         Initialize the Easom class
         """
         self.lower = lower
         self.upper = upper
+        self.minimize = minimize
         super(self.__class__, self).__init__("Easom")
-    
+
     def evaluate(self, population):
         """
         Returns the fitness of a population using the Easom function.
         Population has to be a numpy array for this method to work.
         """
         # Check the var type of the population
-        assert str(type(population)) == "<type 'numpy.ndarray'>"
-        
+        super(self.__class__, self)._check(str(type(population)) == "<type 'numpy.ndarray'>",
+                                           'The population has to be a numpy array')
         # Case of matrix
         if len(population.shape) == 2:
             return np.apply_along_axis(self.evaluate, 1, population)
-        
-        # Check the var type of the population
-        assert len(population)==2
-        
+
+        # ensure population is 2 dimensional
+        super(self.__class__, self)._check(len(population) == 2,
+                                           self.name + ' function can only be evaluated with a chromosome size of 2')
+
         # Make sintax closer to the source
         x1 = population[0]
         x2 = population[1]
-        
+
         # Return the function
-        return -np.cos(x1) * np.cos(x2) * np.exp(-(x1-np.pi)**2 - (x2-np.pi)**2)
-    
+        cost = -np.cos(x1) * np.cos(x2) * np.exp(-(x1 - np.pi) ** 2 - (x2 - np.pi) ** 2)
+        return cost if self.minimize else -(cost)
+
     def plot(self, d3=True, lower=-100, upper=100, samples=1000):
         """
         Makes a 2d/3d (regarding the d3 var) plot using the parent classes.
@@ -56,4 +61,3 @@ class Easom(Function):
             super(self.__class__, self).plot3d(lower, upper, samples)
         else:
             super(self.__class__, self).plot(lower, upper, samples)
-        

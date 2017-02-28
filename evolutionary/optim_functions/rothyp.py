@@ -4,10 +4,11 @@
     @date: Feb - 2017
 """
 
-from .functions import Function
 import numpy as np
 
-#################################################################
+from .functions import Function
+
+
 class Rothyp(Function):
     """    
     The Rotated Hyper-Ellipsoid function is continuous, convex and unimodal. 
@@ -17,34 +18,37 @@ class Rothyp(Function):
     Global minima at x = (0,..,0)
     (Source: https://www.sfu.ca/~ssurjano/rothyp.html)
     """
-    def __init__(self, lower=-65.536, upper=65.536):
+
+    def __init__(self, lower=-65.536, upper=65.536, minimize=True):
         self.lower = lower
         self.upper = upper
+        self.minimize = minimize
         super(self.__class__, self).__init__("Rothyp")
-    
+
     def evaluate(self, population):
         """
         Returns the fitness of a population using the Rothyp function.
         Population has to be a numpy array for this method to work.
         """
         # Check the var type of the population
-        assert str(type(population)) == "<type 'numpy.ndarray'>"
-        
+        super(self.__class__, self)._check(str(type(population)) == "<type 'numpy.ndarray'>",
+                                           'The population has to be a numpy array')
+
         # Case of matrix
         if len(population.shape) == 2:
             return np.apply_along_axis(self.evaluate, 1, population)
-        
+
         # Initialize vars
         res_sum = 0.0
-                        
+
         # Compute the sums on the population
         for i in range(len(population)):
-            for j in range(i+1):
-                res_sum += population[j]**2
+            for j in range(i + 1):
+                res_sum += population[j] ** 2
 
         # Return the function
-        return res_sum
-    
+        return res_sum if self.minimize else -(res_sum)
+
     def plot(self, d3=True, lower=-65.536, upper=65.536, samples=1000):
         """
         Makes a 2d plot using the parent class.
