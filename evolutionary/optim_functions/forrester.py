@@ -14,9 +14,11 @@ class Forrester(Function):
     It is multimodal, with one global minimum, one local minimum and a zero-gradient inflection point. 
     (Source: https://www.sfu.ca/~ssurjano/forretal08.html)
     """
-    def __init__(self):
+    def __init__(self, lower=-0., upper=1.):
         """
         """
+        self.lower = lower
+        self.upper = upper
         super(self.__class__, self).__init__("Forrester")
     
     def evaluate(self, population):
@@ -46,7 +48,7 @@ class Forrester(Function):
         and compute its fitness which will be plotted together.
         """
         if d3:
-            print "Matyas function is 1 dimensional, therefore it cannot have a 3d plot"
+            print (self.name + " function is 1 dimensional, therefore it cannot have a 3d plot")
         else:
             super(self.__class__, self).plot(lower, upper, samples)
 

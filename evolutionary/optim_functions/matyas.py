@@ -15,11 +15,13 @@ class Matyas(Function):
     2 dimensional
     (Source: https://www.sfu.ca/~ssurjano/matya.html)
     """
-    def __init__(self):
+    def __init__(self, lower=-10., upper=10.):
         """
         Initialize the function. 
         Call to its parent class and store the name of the optimization function.
         """
+        self.lower = lower
+        self.upper = upper
         super(self.__class__, self).__init__("Matyas")
     
     def evaluate(self, population):
@@ -51,5 +53,5 @@ class Matyas(Function):
         if d3:
             super(self.__class__, self).plot3d(lower, upper, samples)
         else:
-            print "Matyas function is 2 dimensional, therefore it cannot have a 2d plot"
+            print (self.name + " function is 2 dimensional, therefore it cannot have a 2d plot")
         

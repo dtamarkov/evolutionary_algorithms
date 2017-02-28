@@ -15,11 +15,13 @@ class Zakharov(Function):
     Global minima x = (3, 0.5)
     (Source: https://www.sfu.ca/~ssurjano/beale.html)
     """
-    def __init__(self):
+    def __init__(self, lower=-10., upper=10.):
         """
         Initialize the function. 
         Call to its parent class and store the name of the optimization function.
         """
+        self.lower = lower
+        self.upper = upper
         super(self.__class__, self).__init__("Zakharov")
     
     def evaluate(self, population):
@@ -53,5 +55,5 @@ class Zakharov(Function):
         if d3:
             super(self.__class__, self).plot3d(lower, upper, samples)
         else:
-            print "Beale function is 2 dimensional, therefore, it cannot be displayed in a 2d plot"
+            print (self.name + " function is 2 dimensional, therefore, it cannot be displayed in a 2d plot")
         

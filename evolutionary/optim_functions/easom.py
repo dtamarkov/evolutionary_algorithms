@@ -16,10 +16,12 @@ class Easom(Function):
     global minima at (pi,pi)
     (Source: https://www.sfu.ca/~ssurjano/ackley.html)
     """
-    def __init__(self, a=False, b=False, c=False):
+    def __init__(self, lower=-100., upper=100., a=False, b=False, c=False):
         """
         Initialize the Easom class
         """
+        self.lower = lower
+        self.upper = upper
         super(self.__class__, self).__init__("Easom")
     
     def evaluate(self, population):

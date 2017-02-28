@@ -17,7 +17,9 @@ class Rothyp(Function):
     Global minima at x = (0,..,0)
     (Source: https://www.sfu.ca/~ssurjano/rothyp.html)
     """
-    def __init__(self):
+    def __init__(self, lower=-65.536, upper=65.536):
+        self.lower = lower
+        self.upper = upper
         super(self.__class__, self).__init__("Rothyp")
     
     def evaluate(self, population):

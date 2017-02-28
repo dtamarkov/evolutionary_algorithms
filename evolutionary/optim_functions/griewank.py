@@ -15,11 +15,13 @@ class Griewank(Function):
     Global minima at x* = (0, .. 0)
     (Source: https://www.sfu.ca/~ssurjano/griewank.html)
     """
-    def __init__(self):
+    def __init__(self, lower=-600., upper=600.):
         """
         Initialize the function. 
         Call to its parent class and store the name of the optimization function.
         """
+        self.lower = lower
+        self.upper = upper
         super(self.__class__, self).__init__("Griewank")
     
     def evaluate(self, population):

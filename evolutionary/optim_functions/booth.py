@@ -14,7 +14,9 @@ class Booth(Function):
     2 Dimensional
     (Source: https://www.sfu.ca/~ssurjano/griewank.html)
     """
-    def __init__(self):
+    def __init__(self, lower=-10., upper=10.):
+        self.lower = lower
+        self.upper = upper
         super(self.__class__, self).__init__("Booth")
     
     def evaluate(self, population):
@@ -48,4 +50,4 @@ class Booth(Function):
         if d3:
             super(self.__class__, self).plot3d(lower, upper, samples)
         else:
-            print self.name + " function is 2 dimensional, therefore it cannot have a 2d plot"
+            print (self.name + " function is 2 dimensional, therefore it cannot have a 2d plot")

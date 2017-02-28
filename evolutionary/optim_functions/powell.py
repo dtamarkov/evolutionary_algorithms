@@ -13,11 +13,13 @@ class Powell(Function):
     D dimensional
     (Source: https://www.sfu.ca/~ssurjano/powell.html)
     """
-    def __init__(self):
+    def __init__(self, lower=-4., upper=5.):
         """
         Initialize the class
         Store the name of the class calling the parent class Function
         """
+        self.lower = lower
+        self.upper = upper
         super(self.__class__, self).__init__("Powell")
     
     def evaluate(self, population):

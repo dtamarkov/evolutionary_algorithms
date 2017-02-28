@@ -15,11 +15,13 @@ class Beale(Function):
     Global minima x = (3, 0.5)
     (Source: https://www.sfu.ca/~ssurjano/beale.html)
     """
-    def __init__(self):
+    def __init__(self, lower=-4.5, upper=4.5):
         """
         Initialize the function. 
         Call to its parent class and store the name of the optimization function.
         """
+        self.lower = lower
+        self.upper = upper
         super(self.__class__, self).__init__("Beale")
     
     def evaluate(self, population):
@@ -52,5 +54,5 @@ class Beale(Function):
         if d3:
             super(self.__class__, self).plot3d(lower, upper, samples)
         else:
-            print "Beale function is 2 dimensional, therefore, it cannot be displayed in a 2d plot"
+            print (self.name + " function is 2 dimensional, therefore, it cannot be displayed in a 2d plot")
         

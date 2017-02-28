@@ -27,7 +27,7 @@ class Function(object):
         """
         # Import the neccessary libraries
         import matplotlib.pyplot as plt
-        
+
         # Create the array of values between the bounds and calculate its fitness
         x = np.linspace(lower, upper, samples)
         fitness = np.empty(0)
