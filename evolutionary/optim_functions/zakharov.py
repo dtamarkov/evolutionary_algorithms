@@ -25,6 +25,8 @@ class Zakharov(Function):
         self.lower = lower
         self.upper = upper
         self.minimize = minimize
+        self.dim = None
+        self.name = "Zakharov"
         super(self.__class__, self).__init__("Zakharov")
 
     def evaluate(self, population):

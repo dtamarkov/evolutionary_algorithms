@@ -25,6 +25,8 @@ class Matyas(Function):
         self.lower = lower
         self.upper = upper
         self.minimize = minimize
+        self.dim = 2
+        self.name = "Matyas"
         super(self.__class__, self).__init__("Matyas")
 
     def evaluate(self, population):

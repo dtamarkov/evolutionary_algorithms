@@ -67,15 +67,35 @@ class Logger(object):
         """
         return self.values[key]
 
+    def print_description(self, problem, dim, pop, iter, xover, mutat):
+        """
+
+        :param problem:
+        :param dim:
+        :param pop:
+        :param iter:
+        :param xover:
+        :param mutat:
+        :return:
+        """
+        print "Problem to solve:", problem
+        print "-----------------------------------------"
+        print "Number of problem dimensions:", dim
+        print "Size of the population:", pop
+        print "Max. number of iterations:", iter
+        print "Crossover probability:", xover
+        print "Mutation probability:", mutat
+        print "-----------------------------------------"
+s
     def print_log(self, iteration):
         """
         print the result at the iteration [iteration] of the logged
                 values. Useful to keep track of the process
         :param iteration:
         """
-        res = "Iteration " + str(iteration+1)
+        res = "iteration " + str(iteration+1) + " ||"
         for key in self.values:
-            res += " " + key + " " + str(self.values[key][iteration])
+            res += " " + key + " " + str(self.values[key][iteration]) + " ||"
         print (res)
 
     def plot(self):

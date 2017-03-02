@@ -20,6 +20,8 @@ class Booth(Function):
         self.lower = lower
         self.upper = upper
         self.minimize = minimize
+        self.dim = None
+        self.name = "Booth"
         super(self.__class__, self).__init__("Booth")
 
     def evaluate(self, population):

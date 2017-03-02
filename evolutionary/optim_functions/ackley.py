@@ -20,13 +20,15 @@ class Ackley(Function):
         """
         Initialize the Ackley class with the values of a, b and c
         """
-        super(self.__class__, self).__init__("Ackley")
         self.a = 20 if not a else a
         self.b = 0.2 if not b else b
         self.c = 2 * np.pi if not c else c
         self.lower = lower
         self.upper = upper
         self.minimize = minimize
+        self.dim = None
+        self.name = "Ackley"
+        super(self.__class__, self).__init__("Ackley")
         
     def evaluate(self, population):
         """

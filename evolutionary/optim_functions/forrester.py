@@ -22,6 +22,8 @@ class Forrester(Function):
         self.lower = lower
         self.upper = upper
         self.minimize = minimize
+        self.dim = 1
+        self.name = "Forrester"
         super(self.__class__, self).__init__("Forrester")
 
     def evaluate(self, population):

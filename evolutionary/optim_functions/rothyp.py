@@ -23,6 +23,8 @@ class Rothyp(Function):
         self.lower = lower
         self.upper = upper
         self.minimize = minimize
+        self.dim = None
+        self.name = "Rothyp"
         super(self.__class__, self).__init__("Rothyp")
 
     def evaluate(self, population):

@@ -23,6 +23,8 @@ class Powell(Function):
         self.lower = lower
         self.upper = upper
         self.minimize = minimize
+        self.dim = None
+        self.name = "Powell"
         super(self.__class__, self).__init__("Powell")
 
     def evaluate(self, population):
