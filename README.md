@@ -5,8 +5,10 @@
 The following library wraps the evolutionary process of the genetic algorithms and other evolutionary methods to make them easier to use. 
 
 The library includes:
--[Under construction]
--[Under construction]
+- [x] Logger
+- [x] Optimization Functions
+- [x] Genetic Algorithm
+- [ ] Evolutionary strategies
 
 ## Code example
 Working example of the library for solving the Ackley function with a Genetic Algorithm approach.
