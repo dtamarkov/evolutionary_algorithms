@@ -24,7 +24,7 @@ class GA(object):
     """
 
     def __init__(self,
-                 n_dimensions=2,
+                 n_dimensions=10,
                  n_population=100,
                  n_iterations=1000,
                  n_children=100,
@@ -35,10 +35,10 @@ class GA(object):
                  logger=Logger({'mean', 'best', 'worst'}),
                  initialization=initializations.uniform,
                  problem=functions.Ackley,
-                 selection=selections.wheel,
-                 crossover=crossovers.blend,
-                 mutation=mutations.non_uniform,
-                 replacement=replacements.elitist):
+                 selection='wheel',
+                 crossover='blend',
+                 mutation='non_uniform',
+                 replacement='elitist'):
         """
 
         :param n_dimensions:
@@ -84,9 +84,17 @@ class GA(object):
         # Set a random generator seed to reproduce the same experiments
         np.random.seed(self.seed)
 
+
         # Define the problem to solve and get its fitness function
         problem = self.problem(minimize=self.minimization)
         fitness_function = problem.evaluate
+
+        # Set the dimensions of the problem
+        if problem.dim and self.n_dimensions > problem.dim:
+            import warnings
+            warnings.warn("Changing the number of dimensions of the problem from "
+                          + str(self.n_dimensions) + " to " + str(problem.dim))
+        self.n_dimensions = self.n_dimensions if not problem.dim else problem.dim
 
         # Print a description of the problem
         self.logger.print_description(problem.name, self.n_dimensions,
@@ -140,7 +148,8 @@ class GA(object):
                                                               children, fitness_function(children),
                                                               self.n_population, minimize=self.minimization)
         # Print the best chromosome
-        print(population.chromosomes[np.argmin(fitness)]
+        print "Best individual:", (population.chromosomes[np.argmin(fitness)]
               if self.minimization else population.chromosomes[np.argmax(fitness)])
+
         # Plot the graph with all the results
         self.logger.plot()

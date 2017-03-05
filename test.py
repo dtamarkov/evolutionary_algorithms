@@ -2,11 +2,11 @@ from __future__ import division
 
 import numpy as np
 
-parents = np.array([[1.,2.,3.], [4.,5.,6.], [7.,8.,9.]])
-children = np.array([[1.,1.,1.]])
-fitness = np.array([1.,2.,3.])
+parents = np.array([[1., 2., 3.], [4., 5., 6.], [7., 8., 9.]])
+children = np.array([[1., 1., 1.]])
+fitness = np.array([1., 2., 3.])
 fitness_c = np.array([4.])
-upper =  np.array([[32.,32.,32.],[32.,32.,32.],[32.,32.,32.]])
+upper = np.array([[32., 32., 32.], [32., 32., 32.], [32., 32., 32.]])
 lower = upper * (-1)
 
 # print(np.vstack((parents,children)))
@@ -27,5 +27,23 @@ lower = upper * (-1)
 
 a = np.array([])
 b = np.array([-18.69882179])
-print (np.hstack((a,b)))
+# print (np.hstack((a,b)))
 
+from evolutionary.ga import GA
+
+a = GA(
+    seed=82634,
+    minimization=False,
+    n_dimensions=10,
+    n_population=100,
+    n_iterations=1000,
+    n_children=100,
+    xover_prob=0.8,
+    mutat_prob=0.1,
+    selection='wheel',
+    crossover='blend',
+    mutation='non_uniform',
+    replacement='elitist'
+)
+
+a.run(iter_log=50)

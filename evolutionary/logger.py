@@ -88,6 +88,7 @@ class Logger(object):
         print "Crossover probability:", xover
         print "Mutation probability:", mutat
         print "-----------------------------------------"
+        print '\n'
 
     def print_log(self, iteration):
         """
