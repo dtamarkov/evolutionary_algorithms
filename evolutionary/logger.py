@@ -78,6 +78,8 @@ class Logger(object):
         :param mutat:
         :return:
         """
+
+        print "-----------------------------------------"
         print "Problem to solve:", problem
         print "-----------------------------------------"
         print "Number of problem dimensions:", dim
@@ -86,7 +88,7 @@ class Logger(object):
         print "Crossover probability:", xover
         print "Mutation probability:", mutat
         print "-----------------------------------------"
-s
+
     def print_log(self, iteration):
         """
         print the result at the iteration [iteration] of the logged

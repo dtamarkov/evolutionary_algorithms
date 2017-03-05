@@ -7,12 +7,13 @@
 # Set real division
 from __future__ import division
 
+import evolutionary.initializations as initialization
+import evolutionary.mutations as mutation
+import evolutionary.replacements as replacement
+import evolutionary.selections as selection
 import numpy as np
-import evolutionary.genetic_algorithms.crossovers as crossover
-import evolutionary.genetic_algorithms.initializations as initialization
-import evolutionary.genetic_algorithms.mutations as mutation
-import evolutionary.genetic_algorithms.replacements as replacement
-import evolutionary.genetic_algorithms.selections as selection
+
+import evolutionary.crossovers as crossover
 import evolutionary.optim_functions as functions
 from evolutionary import Logger
 from evolutionary import Population
@@ -27,17 +28,18 @@ np.random.seed(82634)
 minimization = False
 
 # Define the problem to solve and get its fitness function
-problem = functions.Easom(minimize=minimization)
+problem = functions.Ackley(minimize=minimization)
 fitness_function = problem.evaluate
 
 # Initalize vars
-n_dimensions = 10 if problem.dim == None else problem.dim
+n_dimensions = 10 if not problem.dim else problem.dim
 n_population = 100
 n_iterations = 1000
 n_children = n_population
 xover_prob = 0.8
 mutat_prob = 0.1
 iter_log = 50
+
 logger.print_description(problem.name, n_dimensions, n_population, n_iterations, xover_prob, mutat_prob)
 
 # Define the bounds to explore the problem
@@ -57,7 +59,7 @@ for i in range(n_iterations):
                 'worst': np.max(fitness) if minimization else np.min(fitness),
                 'best': np.min(fitness) if minimization else  np.max(fitness)})
 
-    # # Print the iteration result
+    # Print the iteration result
     if (i + 1) % iter_log == 0:
         logger.print_log(i)
 

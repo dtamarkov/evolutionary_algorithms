@@ -136,3 +136,17 @@ def non_uniform(chromosomes, prob, upper, lower, t, tmax, b=5.):
                 chromosomes[i, j] = aux
 
     return chromosomes
+
+# # TODO change population object so it has [chromosome, sigma]
+# def gaussian(population, prob, lower, upper, sigma):
+#     _check(len(population) > 0)
+#     tau = 1 / np.sqrt(len(population))
+#     for i in range(len(population)):
+#         sigma = max(sigma * np.exp(tau * np.random.normal(0, 1), 1e-10)
+#         population[i] = population[i] + sigma * np.random.normal()
+#         # verificar que estan entre los rangos especificados upper y lower
+#         population[ > upper] = upper
+#         population[ < lower] = lower
+#
+#
+#     return population
