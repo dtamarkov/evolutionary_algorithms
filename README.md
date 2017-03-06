@@ -10,6 +10,31 @@ The library includes:
 - [x] Genetic Algorithm
 - [ ] Evolutionary strategies
 
+## Selections
+**wheel**
+
+**tournament**
+
+## Mutations
+
+**uniform**
+
+** non-uniform**
+
+## Crossovers
+**one-point**
+
+**one-point (permutation)**
+
+**two-point**
+
+**blend**
+
+## Replacements
+**worst-fitness**
+
+**elitist**
+
 ## Code example
 Working example of the library for solving the Ackley function with a Genetic Algorithm approach.
 
@@ -33,10 +58,3 @@ a = GA(
 
 a.run(iter_log=50)
 ```
-
-
-
-
-
-
-
