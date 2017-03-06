@@ -19,7 +19,7 @@ The library includes:
 
 **uniform**
 
-** non-uniform**
+**non-uniform**
 
 ## Crossovers
 **one-point**
