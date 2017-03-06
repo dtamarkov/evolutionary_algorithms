@@ -12,26 +12,27 @@ The library includes:
 
 ## Code example
 Working example of the library for solving the Ackley function with a Genetic Algorithm approach.
-    
-    from evolutionary.ga import GA
 
-    a = GA(
-        seed=82634,
-        minimization=False,
-        n_dimensions=10,
-        n_population=100,
-        n_iterations=1000,
-        n_children=100,
-        xover_prob=0.8,
-        mutat_prob=0.1,
-        selection='wheel',
-        crossover='blend',
-        mutation='non_uniform',
-        replacement='elitist'
-    )
+```python
+from evolutionary.ga import GA
 
-    a.run(iter_log=50)
- 
+a = GA(
+    seed=82634,
+    minimization=False,
+    n_dimensions=10,
+    n_population=100,
+    n_iterations=1000,
+    n_children=100,
+    xover_prob=0.8,
+    mutat_prob=0.1,
+    selection='wheel',
+    crossover='blend',
+    mutation='non_uniform',
+    replacement='elitist'
+)
+
+a.run(iter_log=50)
+```
 
 
 
