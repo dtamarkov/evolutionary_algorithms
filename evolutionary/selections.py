@@ -22,14 +22,14 @@ def _check(assertion, message):
         raise
 
 
-def random_n(N, chromosomes):
+def _random_n(N, chromosomes):
     # shuffle the parents to prevent any correlation
     shuffle = np.arange(len(chromosomes))
     np.random.shuffle(shuffle)
     return shuffle[:N]
 
 
-def tournament(parents, fitness, N=5, M=2, iterations=1, minimize=True):
+def tournament(fitness, N=5, M=2, iterations=1, minimize=True):
     """
     parents is an array of chromosomes
     fitness is the chromosomes fitness
@@ -42,26 +42,22 @@ def tournament(parents, fitness, N=5, M=2, iterations=1, minimize=True):
     second it gets its indexes in the population
     finally it returns their genes
     """
-    # Check that population>0
-    _check(len(parents) > 0, "The population cannot be an empty matrix")
-    _check(len(parents) == len(fitness), "len(population) and len(fitness) are not the same")
 
     # Initialize the array that we will return
     indices = np.array([])
     for i in range(iterations):
 
         # Select a subgroup of parents
-        random_parents = random_n(N, parents)
-        idx = ga_tools.n_sort(fitness, M, minimize)
-
+        random_parents = _random_n(N, fitness)
+        idx = ga_tools.n_sort(fitness[random_parents], M, minimize)
         indices = np.append(indices, random_parents[idx])
 
     # Return the indices as an array of integers
     indices = indices.astype(np.int64)
-    return parents[indices], indices
+    return indices
 
 
-def wheel(parents, fitness, M, replacement=True, minimize=True):
+def wheel(fitness, M, replacement=True, minimize=True):
     """
     The wheel selection method sample M parents from the population. Each chromosome has a
     probability to be sampled equivalent to be the value of its fitness.
@@ -73,8 +69,6 @@ def wheel(parents, fitness, M, replacement=True, minimize=True):
     :param minimize: minimization problem or maximization (boolean)
     :return: the sampled chromosomes and its index in the global matrix of chromosomes
     """
-    _check(len(parents) > 0, "The parents cannot be an empty matrix")
-    _check(len(parents) == len(fitness), "len(parents) and len(fitness) are not the same")
 
     # Get the probabilities of each chromosome
     wheel_prob = ga_tools.wheel_prob(fitness, minimize)
@@ -86,4 +80,4 @@ def wheel(parents, fitness, M, replacement=True, minimize=True):
 
     # Return the indices as an array of integers
     indices = indices.astype(np.int64)
-    return parents[indices], indices
+    return indices

@@ -70,7 +70,7 @@ def elitist(parents, pa_fitness, children, ch_fitness, M, elitism=0.5, replaceme
     # Return the shuffled array
     return final_chromosomes
     
-def parent_replace(parents, fitness, children, minimize=True):
+def worst_parents(parents, fitness, children, minimize=True):
     """
     Select the N worst fitness, where N is the number of children, out of the population
     and change them for the new generated children

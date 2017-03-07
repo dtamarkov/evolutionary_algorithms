@@ -7,6 +7,8 @@ from __future__ import division
 import numpy as np
 
 U = np.random.uniform
+N = np.random.normal
+
 
 def _check(assertion, message):
     """
@@ -20,7 +22,7 @@ def _check(assertion, message):
         e.args += message
         raise
 
-        
+
 def pos_swap(chromosomes, prob):
     """
 
@@ -28,22 +30,23 @@ def pos_swap(chromosomes, prob):
     :param prob:
     :return:
     """
-    _check(len(chromosomes)>0, "The population cannot be an empty matrix")
-    
+    _check(len(chromosomes) > 0, "The population cannot be an empty matrix")
+
     # Convert to 2D matrix if it is a 1D array
     if len(chromosomes.shape) == 1:
         chromosomes = np.array([chromosomes])
-    
-    _check(len(chromosomes.shape)==2, "The chromosomes can only be a 1D array or 2D matrix")
-    
+
+    _check(len(chromosomes.shape) == 2, "The chromosomes can only be a 1D array or 2D matrix")
+
     for row in chromosomes:
-        if U(0,1) < prob:
+        if U(0, 1) < prob:
             v1 = np.random.randint(len(row))
             v2 = np.random.randint(len(row))
-            while v1==v2:
+            while v1 == v2:
                 v2 = np.random.randint(len(row))
             row[v1], row[v2] = row[v2], row[v1]
     return chromosomes
+
 
 def uniform(chromosomes, prob, upper, lower):
     """
@@ -54,8 +57,8 @@ def uniform(chromosomes, prob, upper, lower):
     :param lower:
     :return:
     """
-    _check(len(chromosomes)>0, "The population cannot be an empty matrix")
-    
+    _check(len(chromosomes) > 0, "The population cannot be an empty matrix")
+
     # Convert to 2D matrix if it is a 1D array
     if len(chromosomes.shape) == 1:
         chromosomes = np.array([chromosomes])
@@ -63,11 +66,11 @@ def uniform(chromosomes, prob, upper, lower):
         upper = np.array([upper])
     if len(lower.shape) == 1:
         lower = np.array([lower])
-    
-    _check(len(chromosomes.shape)==2, "The chromosomes can only be a 1D array or 2D matrix")
-    
+
+    _check(len(chromosomes.shape) == 2, "The chromosomes can only be a 1D array or 2D matrix")
+
     # Create matrix of booleans that determine wether to mutate or not
-    to_mutate = U(0, 1, chromosomes.shape)<prob
+    to_mutate = U(0, 1, chromosomes.shape) < prob
 
     # Iterate over each value of the chromosomes
     for i in range(len(chromosomes)):
@@ -75,19 +78,20 @@ def uniform(chromosomes, prob, upper, lower):
             # Check if we need to mutate
             if to_mutate[i, j]:
                 # pre-compute the value after the mutation
-                aux = chromosomes[i, j] + (U(0, 1)-0.5)*0.5*(upper[i, j]-lower[i, j])
+                aux = chromosomes[i, j] + (U(0, 1) - 0.5) * 0.5 * (upper[i, j] - lower[i, j])
 
                 # check that the pre-computed mutation is between the lower and upper bounds.
                 # repeat the process if it is not
                 while (lower[i, j] > aux or upper[i, j] < aux):
-                    aux = chromosomes[i, j] + (U(0, 1)-0.5)*0.5*(upper[i, j]-lower[i, j])
-                
+                    aux = chromosomes[i, j] + (U(0, 1) - 0.5) * 0.5 * (upper[i, j] - lower[i, j])
+
                 # once the mutation is between the problem bounds assign it to the chromosomes value
                 chromosomes[i, j] = aux
-            
+
     # return the new generated chromosomes
     return chromosomes
-    
+
+
 def non_uniform(chromosomes, prob, upper, lower, t, tmax, b=5.):
     """
 
@@ -100,8 +104,8 @@ def non_uniform(chromosomes, prob, upper, lower, t, tmax, b=5.):
     :param b:
     :return:
     """
-    _check(len(chromosomes)>0, "The population cannot be an empty matrix")
-    
+    _check(len(chromosomes) > 0, "The population cannot be an empty matrix")
+
     # Convert to 2D matrix if it is a 1D array
     if len(chromosomes.shape) == 1:
         chromosomes = np.array([chromosomes])
@@ -109,12 +113,12 @@ def non_uniform(chromosomes, prob, upper, lower, t, tmax, b=5.):
         upper = np.array([upper])
     if len(lower.shape) == 1:
         lower = np.array([lower])
-    
-    _check(len(chromosomes.shape)==2, "The chromosomes can only be a 1D array or 2D matrix")
-    
+
+    _check(len(chromosomes.shape) == 2, "The chromosomes can only be a 1D array or 2D matrix")
+
     # Create matrix of booleans that determine wether to mutate or not
-    to_mutate = U(0, 1, chromosomes.shape)<prob
-    
+    to_mutate = U(0, 1, chromosomes.shape) < prob
+
     def f(value, i, j):
         """
 
@@ -123,10 +127,10 @@ def non_uniform(chromosomes, prob, upper, lower, t, tmax, b=5.):
         :param j:
         :return:
         """
-        tau = upper[i, j]-lower[i, j] if U(0, 1)>0.5 else lower[i, j]-upper[i, j]
-        snd_part = (1.-U(0, 1)**((1.-t/tmax)**b))
+        tau = upper[i, j] - lower[i, j] if U(0, 1) > 0.5 else lower[i, j] - upper[i, j]
+        snd_part = (1. - U(0, 1) ** ((1. - t / tmax) ** b))
         return value + tau * snd_part
-    
+
     for i in range(len(chromosomes)):
         for j in range(len(chromosomes[i])):
             if to_mutate[i, j]:
@@ -137,16 +141,34 @@ def non_uniform(chromosomes, prob, upper, lower, t, tmax, b=5.):
 
     return chromosomes
 
-# # TODO change population object so it has [chromosome, sigma]
-# def gaussian(population, prob, lower, upper, sigma):
-#     _check(len(population) > 0)
-#     tau = 1 / np.sqrt(len(population))
-#     for i in range(len(population)):
-#         sigma = max(sigma * np.exp(tau * np.random.normal(0, 1), 1e-10)
-#         population[i] = population[i] + sigma * np.random.normal()
-#         # verificar que estan entre los rangos especificados upper y lower
-#         population[ > upper] = upper
-#         population[ < lower] = lower
-#
-#
-#     return population
+
+# TODO change population object so it has [chromosome, sigma]
+def gaussian(chromosomes, prob, lower, upper, sigma):
+    """
+
+    :param chromosomes:
+    :param prob:
+    :param lower:
+    :param upper:
+    :param sigma:
+    :return:
+    """
+    _check(len(chromosomes) > 0, "The chromosomes population cannot be an empty matrix")
+
+    # Create matrix of booleans that determine wether to mutate or not
+    to_mutate = U(0, 1, chromosomes.shape) < prob
+
+    # Create the learning rate parameter
+    tau = 1 / np.sqrt(len(chromosomes))
+
+    for i in range(len(chromosomes)):
+        for j in range(len(chromosomes[i])):
+            if to_mutate[i, j]:
+                sigma = sigma * np.exp(tau * N(0, 1))
+                chromosomes[i, j] = chromosomes[i, j] + sigma * N(0, 1)
+
+    # Verify that the chromosomes value is not out of bounds
+    chromosomes = np.maximum.reduce([chromosomes, lower])
+    chromosomes = np.minimum.reduce([chromosomes, upper])
+
+    return chromosomes, sigma

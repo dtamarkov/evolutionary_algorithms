@@ -13,6 +13,11 @@ class Population(object):
     """
     
     def __init__(self, chromosomes=None, sigma=None):
+        """
+
+        :param chromosomes:
+        :param sigma:
+        """
         self.chromosomes = chromosomes
         self.sigma = sigma
     

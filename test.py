@@ -25,13 +25,13 @@ lower = upper * (-1)
 #     plt.plot(np.cumsum(np.random.randn(10*i,1*i)), color=color_a[i])
 # plt.show()
 
-a = np.array([])
-b = np.array([-18.69882179])
-# print (np.hstack((a,b)))
+# a = np.array( [[1,2,3],[1,2,3]])
+# b = np.array([[4,1,2],[4,1,2]])
+# # print (np.hstack((a,b)))
+# print np.minimum.reduce([a,b])
+from evolutionary.ga import EAL
 
-from evolutionary.ga import GA
-
-a = GA(
+a = EAL(
     seed=82634,
     minimization=False,
     n_dimensions=10,
@@ -46,4 +46,19 @@ a = GA(
     replacement='elitist'
 )
 
-a.run(iter_log=50)
+b = EAL(
+    seed=82634,
+    minimization=False,
+    n_dimensions=10,
+    n_population=100,
+    n_iterations=1000,
+    n_children=100,
+    xover_prob=0.8,
+    mutat_prob=0.2,
+    selection='tournament',
+    crossover='blend',
+    mutation='gaussian',
+    replacement='elitist'
+)
+b.es(iter_log=100)
+# a.ga(iter_log=50)
