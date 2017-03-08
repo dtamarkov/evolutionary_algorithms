@@ -50,13 +50,12 @@ b = EAL(
     seed=82634,
     minimization=False,
     n_dimensions=10,
-    n_population=100,
+    n_population=50,
     n_iterations=1000,
-    n_children=100,
+    n_children=50,
     xover_prob=0.8,
     mutat_prob=0.2,
     selection='tournament',
-    crossover='blend',
     mutation='gaussian',
     replacement='elitist'
 )
