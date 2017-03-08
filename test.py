@@ -29,11 +29,12 @@ lower = upper * (-1)
 # b = np.array([[4,1,2],[4,1,2]])
 # # print (np.hstack((a,b)))
 # print np.minimum.reduce([a,b])
-from evolutionary.ga import EAL
+from evolutionary import EAL, optim_functions as functions
 
 a = EAL(
     seed=82634,
     minimization=False,
+    problem=functions.Ackley,
     n_dimensions=10,
     n_population=100,
     n_iterations=1000,
@@ -49,6 +50,7 @@ a = EAL(
 b = EAL(
     seed=82634,
     minimization=False,
+    problem=functions.Ackley,
     n_dimensions=10,
     n_population=50,
     n_iterations=1000,

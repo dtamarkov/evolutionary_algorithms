@@ -60,6 +60,7 @@ class Function(object):
         # Import the necessary libraries
         import matplotlib.pyplot as plt
         from matplotlib import cm
+        from mpl_toolkits.mplot3d import Axes3D
 
         # Create the three axis: x, y and fitness
         x = np.linspace(lower, upper, samples)
@@ -74,7 +75,7 @@ class Function(object):
 
         # Plot the 3d surface
         fig = plt.figure()
-        ax = fig.add_subplot(111, projection='3d')
+        ax = Axes3D(fig)
         ax.plot_surface(x, y, fitness, cmap=cm.jet, linewidth=0)
 
         # Name each axis and add a title

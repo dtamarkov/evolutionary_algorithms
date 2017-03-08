@@ -12,7 +12,7 @@ import evolutionary.initializations as initializations
 import evolutionary.mutations as mutations
 import evolutionary.replacements as replacements
 import evolutionary.selections as selections
-import optim_functions as functions
+import evolutionary.optim_functions as functions
 from evolutionary import Logger
 from evolutionary import Population
 

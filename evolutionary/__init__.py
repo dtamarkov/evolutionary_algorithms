@@ -1,4 +1,3 @@
-import optim_functions
 from .tools import Population
 from .logger import Logger
 from .ga import EAL

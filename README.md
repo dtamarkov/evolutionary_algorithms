@@ -8,53 +8,87 @@ The library includes:
 - [x] Logger
 - [x] Optimization Functions
 - [x] Genetic Algorithm
-- [ ] Evolutionary strategies
+- [x] Evolutionary strategies (simple version (1 sigma))
+- [ ] Evolutionary strategies (array of sigmas)
+
+## Optimization functions
+The optimization functions are adepted pieces of code obtained from the [web](https://www.sfu.ca/~ssurjano/)
+
+In particular, the library has implemented the following:
+- **Ackley**
+- **Forrester**
+- **Beale**
+- **Rothyp**
+- **Booth**
+- **Easom**
+- **Griweank**
+- **Matyas**
+- **Powell**
+- **Zakharov**
+
+An example of the functions plotted can be found [here](Notebooks/simulated_annealing_ackley.ipynb)
+
+## Initializations
+- **uniform** uses a uniform distribution to sample the elements.
+- **permutation** creates a permutation of *N* elements.
 
 ## Selections
-**wheel**
-
-**tournament**
+- **wheel**: sample from the parents population with a probability of each member proportional to the value of their fitness
+- **tournament**:
 
 ## Mutations
 
-**uniform**
-
-**non-uniform**
+- **position swap**:
+- **uniform**:
+- **non-uniform**:
+- **gaussian**: (Note: this is the mutation used for Evolutionary Strategies[ES])
 
 ## Crossovers
-**one-point**
-
-**one-point (permutation)**
-
-**two-point**
-
-**blend**
+- **one-point**:
+- **one-point (permutation)**:
+- **two-point**:
+- **blend**:
 
 ## Replacements
-**worst-fitness**
-
-**elitist**
+- **worst-fitness**: removes only the chromosomes in the parents population.
+- **elitist**:
 
 ## Code example
-Working example of the library for solving the Ackley function with a Genetic Algorithm approach.
 
 ```python
-from evolutionary.ga import GA
+from evolutionary import EAL, optim_functions as functions
 
-a = GA(
+# Example of a Genetic Algorithm to solve the ackley function
+eal_ga = EAL(
     seed=82634,
     minimization=False,
+    problem=functions.Ackley,
     n_dimensions=10,
-    n_population=100,
+    n_population=50,
     n_iterations=1000,
-    n_children=100,
+    n_children=50,
     xover_prob=0.8,
-    mutat_prob=0.1,
-    selection='wheel',
-    crossover='blend',
-    mutation='non_uniform',
+    mutat_prob=0.2,
+    selection='tournament',
+    mutation='gaussian',
+    replacement='elitist'
+)
+eal_ga.ga()
+
+eal_es = EAL(
+    seed=82634,
+    minimization=False,
+    problem=functions.Ackley,
+    n_dimensions=10,
+    n_population=50,
+    n_iterations=1000,
+    n_children=50,
+    xover_prob=0.8,
+    mutat_prob=0.2,
+    selection='tournament',
+    mutation='gaussian',
     replacement='elitist'
 )
 
-a.run(iter_log=50)
+eal_es.es(iter_log=50)
 ```
