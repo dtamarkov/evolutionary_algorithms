@@ -101,8 +101,8 @@ class EAL(object):
 
         # Print a description of the problem
         logger.print_description(problem.name, self.n_dimensions,
-                                      self.n_population, self.n_iterations,
-                                      self.xover_prob, self.mutat_prob)
+                                 self.n_population, self.n_iterations,
+                                 self.xover_prob, self.mutat_prob)
 
         # Define the bounds to explore the problem
         upper = np.ones((self.n_population, self.n_dimensions)) * problem.upper
@@ -138,10 +138,10 @@ class EAL(object):
 
                 # Log the values
                 logger.log({'mean': np.mean(fitness),
-                                 'worst': np.max(fitness) if self.minimization else np.min(fitness),
-                                 'best': np.min(fitness) if self.minimization else  np.max(fitness),
-                                 'best_chromosome': population.chromosomes[np.argmin(fitness)] if self.minimization else  population.chromosomes[np.argmax(fitness)]})
-
+                            'worst': np.max(fitness) if self.minimization else np.min(fitness),
+                            'best': np.min(fitness) if self.minimization else  np.max(fitness),
+                            'best_chromosome': population.chromosomes[np.argmin(fitness)] if self.minimization else
+                                                population.chromosomes[np.argmax(fitness)]})
 
                 # Print the iteration result
                 if iter_log and (i + 1) % iter_log == 0:
@@ -166,28 +166,28 @@ class EAL(object):
                     if type != "ga":
                         raise ValueError(
                             "The " + self.mutation +
-                            " mutation is supported only by evolutionary strategies")
+                            " mutation is supported only by genetic algorithms (ga)")
                     else:
                         children = crossovers.blend(parents, self.xover_prob, upper[idx], lower[idx])
                 elif self.crossover == 'one_point':
                     if type != "ga":
                         raise ValueError(
                             "The " + self.mutation +
-                            " mutation is supported only by evolutionary strategies")
+                            " mutation is supported only by genetic algorithms (ga)")
                     else:
                         children = crossovers.one_point(parents, self.xover_prob)
                 elif self.crossover == 'one_point_permutation':
                     if type != "ga":
                         raise ValueError(
                             "The " + self.mutation +
-                            " mutation is supported only by evolutionary strategies")
+                            " mutation is supported only by genetic algorithms (ga)")
                     else:
                         children = crossovers.one_point_permutation(parents, self.xover_prob)
                 elif self.crossover == 'two_point':
                     if type != "ga":
                         raise ValueError(
                             "The " + self.mutation +
-                            " mutation is supported only by evolutionary strategies")
+                            " mutation is supported only by genetic algorithms (ga)")
                     else:
                         children = crossovers.two_point(parents, self.xover_prob)
                 else:
@@ -200,7 +200,7 @@ class EAL(object):
                     if type != "ga":
                         raise ValueError(
                             "The " + self.mutation +
-                            " mutation is supported only by genetic algorithms")
+                            " mutation is supported only by genetic algorithms (ga)")
                     else:
                         children = mutations.non_uniform(children, self.mutat_prob, upper[idx], lower[idx],
                                                          i, self.n_iterations)
@@ -222,7 +222,7 @@ class EAL(object):
                     if type != "es":
                         raise ValueError(
                             "The " + self.mutation +
-                            " mutation is supported only by evolutionary strategies")
+                            " mutation is supported only by evolutionary strategies (es)")
                     else:
                         children, population.sigma = mutations.gaussian(parents, self.mutat_prob, lower, upper,
                                                                         population.sigma)
@@ -246,8 +246,10 @@ class EAL(object):
             # Check that best is not an empty object
             if best.size:
                 res = "\n-----------------------------------------\n"
-                res += "Best individual:\n" + str(best[np.argmin(logger.get_log('best'))] if self.minimization else best[np.argmax(logger.get_log('best'))])
-                print (res)
+                res += "Best individual:\n" + str(
+                    best[np.argmin(logger.get_log('best'))] if self.minimization else best[
+                        np.argmax(logger.get_log('best'))])
+                print(res)
 
             # Plot the graph with all the results
             logger.plot()

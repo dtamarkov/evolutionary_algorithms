@@ -3,13 +3,17 @@
 # Evolutionary Algorithms Library (EAL)
 
 The following library wraps the evolutionary process of the evolutionary algorithms to make them easier to use.
-It has a modular structure that makes easy to implement new modules.
+It has a modular structure that makes easy to implement new operators for the selection, crossover, mutation, replacement operations or optimization functions.
 
-The library includes:
+The EAL library includes:
 - [x] Logger
 - [x] Optimization Functions
-- [x] Genetic Algorithm
-- [x] Evolutionary strategies (simple version (1 sigma))
+- [x] Built-in simple mutations
+- [x] Built-in simple crossovers
+- [x] Built-in simple selection methods
+- [x] Built-in simple replacement methods
+- [x] Genetic Algorithms process
+- [x] Evolutionary strategies process (simple version (1 sigma))
 - [ ] Evolutionary strategies (array of sigmas)
 
 ## Optimization functions
@@ -30,8 +34,9 @@ In particular, the library has implemented the following functions:
 An example of the functions plotted can be found [here](notebooks/functions_visualization.ipynb)
 
 ## EAL class
-The EAL class is a wrapper of the evolutionary process. It accepts a great number of parameters that set up the algorithm.
- It includes a logger that keeps track of the population over the process and supports different
+The EAL class is a wrapper of the evolutionary process. It accepts a great number of parameters that
+set up the evolutionary algorithm.
+It puts together all the implemented features and operators and supports different
 evolutionary paradigms like: *Genetic Algorithms (ga)* and *Evolution Strategies (es)*.
 
 ### Initialization Parameters
@@ -47,53 +52,57 @@ evolutionary paradigms like: *Genetic Algorithms (ga)* and *Evolution Strategies
  - **initialization**: How to initialize the population ['uniform']
    - *'permutation'*: Each chromosome is a permutation of n_dimensions 
    - *'uniform'*: Initialize each chromosome randomly sampling it from a uniform distribution
- - **problem**: sets the objetive function
- - **selection**: sets the selection function (check 
-[Selection section](#Selections))
+ - **problem**: sets the objetive function [Acley()]
+ - **selection**: sets the selection function (check
+[Selection section](#selections)) ['wheel']
     - *'Tournament'*:
     - *'Wheel'*:
  - **crossover** sets the crossover operator (check 
-[Croosovers section](#Croosovers))
+[Crossovers section](#crossovers)) ['blend']
     - *'one-point'*:
     - *'one-point-permutation'*:
     - *'two-point'*:
     - *'blend'*:
  - **mutation**: sets the mutation operator(check 
-[Mutation section](#Mutations))
+[Mutation section](#mutations)) ['non-uniform']
     - *'pos-swap'*:
     - *'uniform'*:
     - *'non-uniform'*:
     - *'gaussian'*:
  - **replacement**: (check 
-[Replacement section](#Replacements))
+[Replacement section](#replacements)) ['elitist']
     - *'Elitist'*:
     - *'Worst-parents'*:
- - **tournament_competitors**: number of competitors in the tournament selection.
- - **tournament_winners**: number of winners in the tournament selection.
- - **replacement_elitism**: rate of eletism for the eletist replacement.
+ - **tournament_competitors**: number of competitors in the tournament selection. [3]
+ - **tournament_winners**: number of winners in the tournament selection. [1]
+ - **replacement_elitism**: rate of eletism for the eletist replacement. [0.5]
 
-## Initializations [TODO]
+## Initializations
+[TODO]
 - **uniform** uses a uniform distribution to sample the elements.
 - **permutation** creates a permutation of *N* elements.
 
-## Selections [TODO]
+## Selections
+[TODO]
 - **wheel**: sample from the parents population with a probability of each member proportional to the value of their fitness
 - **tournament**:
 
-## Mutations [TODO]
-
+## Mutations
+[TODO]
 - **position swap**:
 - **uniform**:
 - **non-uniform**:
-- **gaussian**: (Note: this is the mutation used for Evolutionary Strategies[ES])
+- **gaussian**: (Note: this is the mutation used for Evolutionary Strategies (es))
 
-## Crossovers [TODO]
+## Crossovers
+[TODO]
 - **one-point**:
 - **one-point (permutation)**:
 - **two-point**:
 - **blend**:
 
-## Replacements [TODO]
+## Replacements
+[TODO]
 - **worst-fitness**: removes the chromosomes inside the parensts population with the worst fitness.
 - **elitist**:
 
