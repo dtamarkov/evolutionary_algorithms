@@ -47,15 +47,17 @@ class Logger(object):
         """
         for key in values:
             # Check if it is an array, in this case store it vertically (vstack)
-            if str(type(values[key]))=="<type 'numpy.ndarray'>":
-                self.values[key] = np.vstack((self.values[key], values[key])) if key in self.values else  np.array(values[key])
+            if str(type(values[key])) == "<type 'numpy.ndarray'>":
+                self.values[key] = np.vstack((self.values[key], values[key])) if key in self.values else  np.array(
+                    values[key])
             else:
                 # If the element in value[key] is a number we transform it to an array
                 if str(type(values[key])) == "<type 'numpy.float64'>":
                     values[key] = np.array([values[key]])
 
                 # add the value to the log of values
-                self.values[key] = np.hstack((self.values[key], values[key])) if key in self.values else  np.array(values[key])
+                self.values[key] = np.hstack((self.values[key], values[key])) if key in self.values else  np.array(
+                    values[key])
 
         self.log_size += 1
 
@@ -77,26 +79,16 @@ class Logger(object):
         :return:
         """
 
-        print
-        "-----------------------------------------"
-        print
-        "Problem to solve:", problem
-        print
-        "-----------------------------------------"
-        print
-        "Number of problem dimensions:", dim
-        print
-        "Size of the population:", pop
-        print
-        "Max. number of iterations:", iter
-        print
-        "Crossover probability:", xover
-        print
-        "Mutation probability:", mutat
-        print
-        "-----------------------------------------"
-        print
-        '\n'
+        res = "-----------------------------------------"
+        res += "\nProblem to solve:\t" + problem
+        res += "\n-----------------------------------------"
+        res += "\nNumber of problem dimensions:\t" + str(dim)
+        res += "\nSize of the population:\t" + str(pop)
+        res += "\nMax. number of iterations:\t" + str(iter)
+        res += "\nCrossover probability:\t" + str(xover)
+        res += "\nMutation probability:\t" + str(mutat)
+        res += "\n-----------------------------------------\n"
+        print(res)
 
     def print_log(self, iteration):
         """
@@ -107,7 +99,7 @@ class Logger(object):
         res = "iteration " + str(iteration + 1) + " ||"
         for key in self.values:
             # Avoid printing values logged as matrix
-            if len(self.values[key].shape)==1:
+            if len(self.values[key].shape) == 1:
                 res += " " + key + " " + str(self.values[key][iteration]) + " ||"
         print(res)
 
@@ -119,12 +111,12 @@ class Logger(object):
 
         # create a palette of colours with the number of keys
         keys = [key for key in self.values]
-        palette = sns.color_palette("husl", len(keys))
+        palette = sns.color_palette("hls", len(keys))
 
         i = 0
         for key in self.values:
             # Avoid printing values logged as matrix
-            if len(self.values[key].shape)==1:
+            if len(self.values[key].shape) == 1:
                 sns.plt.plot(np.arange(0, self.log_size), np.abs(self.values[key]), color=palette[i])
                 i += 1
 

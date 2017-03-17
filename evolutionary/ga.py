@@ -30,7 +30,6 @@ class EAL(object):
                  mutat_prob=0.1,
                  minimization=False,
                  seed=12345,
-
                  initialization='uniform',
                  problem=functions.Ackley,
                  selection='wheel',
@@ -246,10 +245,9 @@ class EAL(object):
             best = logger.get_log('best_chromosome')
             # Check that best is not an empty object
             if best.size:
-                print
-                "-----------------------------------------"
-                print
-                "Best individual:", (best[np.argmin(logger.get_log('best'))] if self.minimization else best[np.argmax(logger.get_log('best'))])
+                res = "\n-----------------------------------------\n"
+                res += "Best individual:\n" + str(best[np.argmin(logger.get_log('best'))] if self.minimization else best[np.argmax(logger.get_log('best'))])
+                print (res)
 
             # Plot the graph with all the results
             logger.plot()

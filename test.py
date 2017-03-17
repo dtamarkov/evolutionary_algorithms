@@ -62,5 +62,6 @@ b = EAL(
     mutation='gaussian',
     replacement='elitist'
 )
-# b.fit(type="es", iter_log=100)
+
+# a.fit(type="ga", iter_log=100)
 b.fit(type="es", iter_log=50)
