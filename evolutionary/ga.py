@@ -5,7 +5,6 @@
 """
 
 import warnings
-
 import numpy as np
 import evolutionary.crossovers as crossovers
 import evolutionary.initializations as initializations
@@ -31,7 +30,7 @@ class EAL(object):
                  mutat_prob=0.1,
                  minimization=False,
                  seed=12345,
-                 logger=Logger({'mean', 'best', 'worst'}),
+
                  initialization='uniform',
                  problem=functions.Ackley,
                  selection='wheel',
@@ -69,7 +68,6 @@ class EAL(object):
         self.mutat_prob = mutat_prob
         self.minimization = minimization
         self.seed = seed
-        self.logger = logger
         self.initialization = initialization
         self.problem = problem
         self.selection = selection
@@ -80,7 +78,7 @@ class EAL(object):
         self.tournament_winners = tournament_winners
         self.replacement_elitism = replacement_elitism
 
-    def ga(self, iter_log=50):
+    def fit(self, type="ga", iter_log=50):
         """
 
         :param iter_log:
@@ -90,19 +88,20 @@ class EAL(object):
         # Set a random generator seed to reproduce the same experiments
         np.random.seed(self.seed)
 
+        logger = Logger()
+
         # Define the problem to solve and get its fitness function
         problem = self.problem(minimize=self.minimization)
         fitness_function = problem.evaluate
 
         # Set the dimensions of the problem
         if problem.dim and self.n_dimensions > problem.dim:
-            import warnings
             warnings.warn("Changing the number of dimensions of the problem from "
                           + str(self.n_dimensions) + " to " + str(problem.dim))
         self.n_dimensions = self.n_dimensions if not problem.dim else problem.dim
 
         # Print a description of the problem
-        self.logger.print_description(problem.name, self.n_dimensions,
+        logger.print_description(problem.name, self.n_dimensions,
                                       self.n_population, self.n_iterations,
                                       self.xover_prob, self.mutat_prob)
 
@@ -112,15 +111,26 @@ class EAL(object):
 
         try:
             # Create the class Population and initialize its chromosomes
-            if self.initialization == 'uniform':
-                population = Population(
-                    chromosomes=initializations.uniform(self.n_population, lower,
-                                                        upper, self.n_dimensions))
-            elif self.initialization == 'permutation':
-                population = Population(
-                    chromosomes=initializations.permutation(self.n_population, self.n_dimensions))
-            else:
-                raise ValueError("The specified initialization doesn't match. Stopping the algorithm")
+            if type == "ga":
+                if self.initialization == 'uniform':
+                    population = Population(
+                        chromosomes=initializations.uniform(self.n_population, lower,
+                                                            upper, self.n_dimensions))
+                elif self.initialization == 'permutation':
+                    population = Population(
+                        chromosomes=initializations.permutation(self.n_population, self.n_dimensions))
+                else:
+                    raise ValueError("The specified initialization doesn't match. Stopping the algorithm")
+            elif type == "es":
+                if self.initialization == 'uniform':
+                    population = Population(
+                        chromosomes=initializations.uniform(self.n_population, lower,
+                                                            upper, self.n_dimensions),
+                        sigma=np.random.uniform() * (np.mean(upper) - np.mean(lower)) / 10)
+                elif self.initialization == 'permutation':
+                    raise ValueError("The permutation initialization is not allowed yet with an evolutionary strategy")
+                else:
+                    raise ValueError("The specified initialization doesn't match. Stopping the algorithm")
 
             # Iterate simulating the evolutionary process
             for i in range(self.n_iterations):
@@ -128,13 +138,15 @@ class EAL(object):
                 fitness = fitness_function(population.chromosomes)
 
                 # Log the values
-                self.logger.log({'mean': np.mean(fitness),
+                logger.log({'mean': np.mean(fitness),
                                  'worst': np.max(fitness) if self.minimization else np.min(fitness),
-                                 'best': np.min(fitness) if self.minimization else  np.max(fitness)})
+                                 'best': np.min(fitness) if self.minimization else  np.max(fitness),
+                                 'best_chromosome': population.chromosomes[np.argmin(fitness)] if self.minimization else  population.chromosomes[np.argmax(fitness)]})
+
 
                 # Print the iteration result
                 if iter_log and (i + 1) % iter_log == 0:
-                    self.logger.print_log(i)
+                    logger.print_log(i)
 
                 # Select a subgroup of parents
                 if self.selection == 'wheel':
@@ -149,25 +161,72 @@ class EAL(object):
                 parents = population.chromosomes[idx]
 
                 # Use recombination to generate new children
-                if self.crossover == 'blend':
-                    children = crossovers.blend(parents, self.xover_prob, upper[idx], lower[idx])
+                if not self.crossover:
+                    warnings.warn("Warning: Crossover won't be applied")
+                elif self.crossover == 'blend':
+                    if type != "ga":
+                        raise ValueError(
+                            "The " + self.mutation +
+                            " mutation is supported only by evolutionary strategies")
+                    else:
+                        children = crossovers.blend(parents, self.xover_prob, upper[idx], lower[idx])
                 elif self.crossover == 'one_point':
-                    children = crossovers.one_point(parents, self.xover_prob)
+                    if type != "ga":
+                        raise ValueError(
+                            "The " + self.mutation +
+                            " mutation is supported only by evolutionary strategies")
+                    else:
+                        children = crossovers.one_point(parents, self.xover_prob)
                 elif self.crossover == 'one_point_permutation':
-                    children = crossovers.one_point_permutation(parents, self.xover_prob)
+                    if type != "ga":
+                        raise ValueError(
+                            "The " + self.mutation +
+                            " mutation is supported only by evolutionary strategies")
+                    else:
+                        children = crossovers.one_point_permutation(parents, self.xover_prob)
                 elif self.crossover == 'two_point':
-                    children = crossovers.two_point(parents, self.xover_prob)
+                    if type != "ga":
+                        raise ValueError(
+                            "The " + self.mutation +
+                            " mutation is supported only by evolutionary strategies")
+                    else:
+                        children = crossovers.two_point(parents, self.xover_prob)
                 else:
                     raise ValueError("The specified crossover doesn't match. Not applying the crossover operation")
 
                 # Mutate the generated children
-                if self.mutation == 'non_uniform':
-                    children = mutations.non_uniform(children, self.mutat_prob, upper[idx], lower[idx],
-                                                     i, self.n_iterations)
+                if not self.mutation:
+                    warnings.warn("Warning: Mutation won't be applied")
+                elif self.mutation == 'non_uniform':
+                    if type != "ga":
+                        raise ValueError(
+                            "The " + self.mutation +
+                            " mutation is supported only by genetic algorithms")
+                    else:
+                        children = mutations.non_uniform(children, self.mutat_prob, upper[idx], lower[idx],
+                                                         i, self.n_iterations)
                 elif self.mutation == 'uniform':
-                    children = mutations.uniform(children, self.mutat_prob, upper[idx], lower[idx])
+                    if type != "ga":
+                        raise ValueError(
+                            "The " + self.mutation +
+                            " mutation is supported only by genetic algorithms")
+                    else:
+                        children = mutations.uniform(children, self.mutat_prob, upper[idx], lower[idx])
                 elif self.mutation == 'swap':
-                    children = mutations.pos_swap(children, self.mutat_prob)
+                    if type != "ga":
+                        raise ValueError(
+                            "The " + self.mutation +
+                            " mutation is supported only by genetic algorithms")
+                    else:
+                        children = mutations.pos_swap(children, self.mutat_prob)
+                elif self.mutation == 'gaussian':
+                    if type != "es":
+                        raise ValueError(
+                            "The " + self.mutation +
+                            " mutation is supported only by evolutionary strategies")
+                    else:
+                        children, population.sigma = mutations.gaussian(parents, self.mutat_prob, lower, upper,
+                                                                        population.sigma)
                 else:
                     raise ValueError("The specified mutation doesn't match. Not applying the mutation operation")
 
@@ -183,117 +242,17 @@ class EAL(object):
                 else:
                     raise ValueError("The specified replacement doesn't match. Not applying the replacement operation")
 
-        except ValueError as err:
-            print(err.args)
+            # Print the best chromosome
+            best = logger.get_log('best_chromosome')
+            # Check that best is not an empty object
+            if best.size:
+                print
+                "-----------------------------------------"
+                print
+                "Best individual:", (best[np.argmin(logger.get_log('best'))] if self.minimization else best[np.argmax(logger.get_log('best'))])
 
-        # Print the best chromosome
-        print
-        "Best individual:", (population.chromosomes[np.argmin(fitness)]
-                             if self.minimization else population.chromosomes[np.argmax(fitness)])
-
-        # Plot the graph with all the results
-        self.logger.plot()
-
-    def es(self, iter_log=50):
-        """
-
-        :param iter_log:
-        :return:
-        """
-
-        # Set a random generator seed to reproduce the same experiments
-        np.random.seed(self.seed)
-
-        # Define the problem to solve and get its fitness function
-        problem = self.problem(minimize=self.minimization)
-        fitness_function = problem.evaluate
-
-        # Set the dimensions of the problem
-        if problem.dim and self.n_dimensions > problem.dim:
-            import warnings
-            warnings.warn("Changing the number of dimensions of the problem from "
-                          + str(self.n_dimensions) + " to " + str(problem.dim))
-        self.n_dimensions = self.n_dimensions if not problem.dim else problem.dim
-
-        # Print a description of the problem
-        self.logger.print_description(problem.name, self.n_dimensions,
-                                      self.n_population, self.n_iterations,
-                                      self.xover_prob, self.mutat_prob)
-
-        # Define the bounds to explore the problem
-        upper = np.ones((self.n_population, self.n_dimensions)) * problem.upper
-        lower = np.ones((self.n_population, self.n_dimensions)) * problem.lower
-
-        try:
-            # Create the class Population and initialize its chromosomes
-            if self.initialization == 'uniform':
-                population = Population(
-                    chromosomes=initializations.uniform(self.n_population, lower,
-                                                        upper, self.n_dimensions),
-                    sigma=np.random.uniform() * (np.mean(upper) - np.mean(lower)) / 10)
-            elif self.initialization == 'permutation':
-                raise ValueError("The permutation initialization is not allowed yet with an evolutionary strategy")
-            else:
-                raise ValueError("The specified initialization doesn't match. Stopping the algorithm")
-
-            # Iterate simulating the evolutionary process
-            for i in range(self.n_iterations):
-                # Apply the function in each row to get the array of fitness
-                fitness = fitness_function(population.chromosomes)
-
-                # Log the values
-                self.logger.log({'mean': np.mean(fitness),
-                                 'worst': np.max(fitness) if self.minimization else np.min(fitness),
-                                 'best': np.min(fitness) if self.minimization else  np.max(fitness)})
-
-                # Print the iteration result
-                if iter_log and (i + 1) % iter_log == 0:
-                    self.logger.print_log(i)
-
-                # Select a subgroup of parents
-                if self.selection == 'wheel':
-                    idx = selections.wheel(fitness, M=self.n_children, minimize=self.minimization)
-                elif self.selection == 'tournament':
-                    idx = selections.tournament(fitness, N=self.tournament_competitors,
-                                                M=self.tournament_winners,
-                                                iterations=int(self.n_children / self.tournament_winners),
-                                                minimize=self.minimization)
-                else:
-                    raise ValueError("The specified selection doesn't match. Not applying the selection operation")
-                parents = population.chromosomes[idx]
-
-                # Mutate the generated children
-                if self.mutation == 'non_uniform' or self.mutation == 'uniform' or self.mutation == 'swap':
-                    raise ValueError(
-                        "The " + self.mutation + " mutation is not supported in the evolutionary strategies")
-                elif self.mutation == 'gaussian':
-                    children, population.sigma = mutations.gaussian(parents, self.mutat_prob, lower, upper,
-                                                                    population.sigma)
-                else:
-                    raise ValueError("The specified mutation doesn't match. Not applying the mutation operation")
-
-                # Replace the current chromosomes of parents and childrens to
-                # create the new chromosomes
-                if self.replacement == 'elitist':
-                    population.chromosomes = replacements.elitist(population.chromosomes, fitness,
-                                                                  children, fitness_function(children),
-                                                                  self.n_population,
-                                                                  elitism=self.replacement_elitism,
-                                                                  minimize=self.minimization)
-                elif self.replacement == 'worst_parents':
-                    population.chromosomes = replacements.worst_parents(parents, fitness, children,
-                                                                        self.minimization)
-                else:
-                    raise ValueError(
-                        "The specified replacement doesn't match. Not applying the replacement operation")
+            # Plot the graph with all the results
+            logger.plot()
 
         except ValueError as err:
             print(err.args)
-
-        # Print the best chromosome
-        print
-        "Best individual:", (population.chromosomes[np.argmin(fitness)]
-                             if self.minimization else population.chromosomes[np.argmax(fitness)])
-
-        # Plot the graph with all the results
-        self.logger.plot()

@@ -15,7 +15,7 @@ class Logger(object):
     as a graph.
     """
 
-    def __init__(self, logs):
+    def __init__(self):
         """
         Initializes the Logger object creating the dictionary of arrays
         to store the logged values
@@ -23,8 +23,6 @@ class Logger(object):
         """
         self.values = {}
         self.log_size = 0
-        for key in logs:
-            self.values[key] = np.array([])
 
     def add_log(self, logs):
         """
@@ -47,21 +45,22 @@ class Logger(object):
         Stores the logged values into the [values] dictionary
         :param values:
         """
-        for key in self.values:
+        for key in values:
+            # Check if it is an array, in this case store it vertically (vstack)
+            if str(type(values[key]))=="<type 'numpy.ndarray'>":
+                self.values[key] = np.vstack((self.values[key], values[key])) if key in self.values else  np.array(values[key])
+            else:
+                # If the element in value[key] is a number we transform it to an array
+                if str(type(values[key])) == "<type 'numpy.float64'>":
+                    values[key] = np.array([values[key]])
 
-            # If the element in value[key] is a number we transform it to an array
-            if str(type(values[key])) == "<type 'numpy.float64'>":
-                values[key] = np.array([values[key]])
-            # We can only log one value at a time
-            assert (len(values[key]) == 1)
+                # add the value to the log of values
+                self.values[key] = np.hstack((self.values[key], values[key])) if key in self.values else  np.array(values[key])
 
-            # add the value to the log of values
-            self.values[key] = np.hstack((self.values[key], values[key]))
         self.log_size += 1
 
     def get_log(self, key):
         """
-
         :param key:
         :return: return one of the logged values
         """
@@ -69,7 +68,6 @@ class Logger(object):
 
     def print_description(self, problem, dim, pop, iter, xover, mutat):
         """
-
         :param problem:
         :param dim:
         :param pop:
@@ -79,16 +77,26 @@ class Logger(object):
         :return:
         """
 
-        print "-----------------------------------------"
-        print "Problem to solve:", problem
-        print "-----------------------------------------"
-        print "Number of problem dimensions:", dim
-        print "Size of the population:", pop
-        print "Max. number of iterations:", iter
-        print "Crossover probability:", xover
-        print "Mutation probability:", mutat
-        print "-----------------------------------------"
-        print '\n'
+        print
+        "-----------------------------------------"
+        print
+        "Problem to solve:", problem
+        print
+        "-----------------------------------------"
+        print
+        "Number of problem dimensions:", dim
+        print
+        "Size of the population:", pop
+        print
+        "Max. number of iterations:", iter
+        print
+        "Crossover probability:", xover
+        print
+        "Mutation probability:", mutat
+        print
+        "-----------------------------------------"
+        print
+        '\n'
 
     def print_log(self, iteration):
         """
@@ -96,10 +104,12 @@ class Logger(object):
                 values. Useful to keep track of the process
         :param iteration:
         """
-        res = "iteration " + str(iteration+1) + " ||"
+        res = "iteration " + str(iteration + 1) + " ||"
         for key in self.values:
-            res += " " + key + " " + str(self.values[key][iteration]) + " ||"
-        print (res)
+            # Avoid printing values logged as matrix
+            if len(self.values[key].shape)==1:
+                res += " " + key + " " + str(self.values[key][iteration]) + " ||"
+        print(res)
 
     def plot(self):
         """
@@ -113,8 +123,10 @@ class Logger(object):
 
         i = 0
         for key in self.values:
-            sns.plt.plot(np.arange(0, self.log_size), np.abs(self.values[key]), color=palette[i])
-            i += 1
+            # Avoid printing values logged as matrix
+            if len(self.values[key].shape)==1:
+                sns.plt.plot(np.arange(0, self.log_size), np.abs(self.values[key]), color=palette[i])
+                i += 1
 
         sns.plt.legend(keys, loc='upper right')
         sns.plt.show()

@@ -58,8 +58,9 @@ b = EAL(
     xover_prob=0.8,
     mutat_prob=0.2,
     selection='tournament',
+    crossover=None,
     mutation='gaussian',
     replacement='elitist'
 )
-b.es(iter_log=100)
-# a.ga(iter_log=50)
+# b.fit(type="es", iter_log=100)
+b.fit(type="es", iter_log=50)

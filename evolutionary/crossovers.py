@@ -173,6 +173,15 @@ def blend(parents, prob, upper, lower, alpha=0.5):
         
     # Return the generated children
     return parents
-            
-            
-        
+
+# def SPX(n, m, e=0.1):
+#
+#     O = 1/len(m) * np.sum(m, axis=0)
+#     print ("O", O)
+#     Y = (1+e) * (m - O)
+#     return Y
+#
+#
+# m = np.array([[1,1], [2,2], [3,3]])
+# print
+# print (SPX(2, m))

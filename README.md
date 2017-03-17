@@ -26,7 +26,7 @@ In particular, the library has implemented the following:
 - **Powell**
 - **Zakharov**
 
-An example of the functions plotted can be found [here](Notebooks/simulated_annealing_ackley.ipynb)
+An example of the functions plotted can be found [here](notebooks/simulated_annealing_ackley.ipynb)
 
 ## Initializations
 - **uniform** uses a uniform distribution to sample the elements.
