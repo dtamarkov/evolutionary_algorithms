@@ -39,6 +39,7 @@ class EAL(object):
                  tournament_competitors=3,
                  tournament_winners=1,
                  replacement_elitism=0.5,
+                 delta=1,
                  ):
         """
 
@@ -57,6 +58,7 @@ class EAL(object):
         :param crossover:
         :param mutation:
         :param replacement:
+        :param delta: Parameter used in GGA(Grid-based Genetic Algorithms)
         """
 
         self.n_dimensions = n_dimensions
@@ -76,6 +78,7 @@ class EAL(object):
         self.tournament_competitors = tournament_competitors
         self.tournament_winners = tournament_winners
         self.replacement_elitism = replacement_elitism
+        self.delta = delta
 
     def fit(self, type="ga", iter_log=50):
         """
@@ -130,6 +133,34 @@ class EAL(object):
                     raise ValueError("The permutation initialization is not allowed yet with an evolutionary strategy")
                 else:
                     raise ValueError("The specified initialization doesn't match. Stopping the algorithm")
+            elif type == "gga":
+                # Initialize vars
+                aux_delta = np.array([(upper[0] - lower[0]) / 10])
+                aux_s = [np.arange(np.floor(lower[0] / aux_delta[-1]), np.floor(upper[0] / aux_delta[-1]))]
+                aux_alpha = np.random.uniform(0, aux_delta)
+
+                # Calculate taking into account that each dimension could have a different upper or lower bound
+                for i in range(len(upper[1:])):
+                    # Compute the delta value for the dimension and add it to the array of deltas
+                    aux_delta = np.hstack((aux_delta, (upper[i] - lower[i]) / 10))
+
+                    # Get the values of S according to delta
+                    aux_s = np.vstack(
+                        (aux_s, np.arange(np.floor(lower[i] / aux_delta[-1]), np.floor(upper[i] / aux_delta[-1]))))
+
+                    # Sample the alpha values between 0 and delta from a uniform distribution
+                    aux_alpha = np.hstack((aux_alpha, np.random.uniform(0, aux_delta[-1])))
+
+                # Initialize the Population class with delta, s and alpha
+                population = Population(
+                    delta=aux_delta,
+                    s=aux_s.astype(int),
+                    alpha=aux_alpha
+                )
+                population.chromosomes = population.gga_chromosome()
+            else:
+                raise ValueError(
+                    "The defined Strategy type doesn't match with a Genetic Algoritghm (ga), Evolution Strategy (es) nor Grid-based Genetic Algorithm (GGA)")
 
             # Iterate simulating the evolutionary process
             for i in range(self.n_iterations):
@@ -141,7 +172,7 @@ class EAL(object):
                             'worst': np.max(fitness) if self.minimization else np.min(fitness),
                             'best': np.min(fitness) if self.minimization else  np.max(fitness),
                             'best_chromosome': population.chromosomes[np.argmin(fitness)] if self.minimization else
-                                                population.chromosomes[np.argmax(fitness)]})
+                            population.chromosomes[np.argmax(fitness)]})
 
                 # Print the iteration result
                 if iter_log and (i + 1) % iter_log == 0:
@@ -170,12 +201,15 @@ class EAL(object):
                     else:
                         children = crossovers.blend(parents, self.xover_prob, upper[idx], lower[idx])
                 elif self.crossover == 'one_point':
-                    if type != "ga":
+                    if type != "ga" and type != "gga":
                         raise ValueError(
                             "The " + self.mutation +
                             " mutation is supported only by genetic algorithms (ga)")
                     else:
-                        children = crossovers.one_point(parents, self.xover_prob)
+                        if type == "ga":
+                            children = crossovers.one_point(parents, self.xover_prob)
+                        elif type == "gga":
+
                 elif self.crossover == 'one_point_permutation':
                     if type != "ga":
                         raise ValueError(

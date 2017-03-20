@@ -41,68 +41,65 @@ evolutionary paradigms like: *Genetic Algorithms (ga)* and *Evolution Strategies
 
 ### Initialization Parameters
 
- - **n_dimensions**: number of dimensions used to solve the problem [10]
- - **n_population**: size of the population (its number of chromosomes) [100]
- - **n_iterations**: number of iterations to do [1000]
- - **n_children**: number of childrens to generate [100]
- - **xover_prob**: croosover probability [0.8]
- - **mutat_prob**: mutation probability [0.1]
- - **minimization**: True if we want to minimize the objetive function [False]
- - **seed**: set the seed for reproducibility [12345]
- - **initialization**: How to initialize the population ['uniform']
-   - *'permutation'*: Each chromosome is a permutation of n_dimensions 
-   - *'uniform'*: Initialize each chromosome randomly sampling it from a uniform distribution
- - **problem**: sets the objetive function [Acley()]
- - **selection**: sets the selection function (check
-[Selection section](#selections)) ['wheel']
+ - **n_dimensions**: number of dimensions used to solve the problem. *[10]*
+ - **n_population**: size of the population (its number of chromosomes). *[100]*
+ - **n_iterations**: number of iterations to do. *[1000]*
+ - **n_children**: number of childrens to generate. *[100]*
+ - **xover_prob**: croosover probability. *[0.8]*
+ - **mutat_prob**: mutation probability. *[0.1]*
+ - **minimization**: True if we want to minimize the objetive function. *[False]*
+ - **seed**: set the seed for reproducibility. *[12345]*
+ - **initialization**: How to initialize the population. ['uniform']
+   - *'permutation'*: Each chromosome is a permutation of n_dimensions.
+   - *'uniform'*: Initialize each chromosome randomly sampling it from a uniform distribution.
+ - **problem**: sets the objetive function. *[Acley]*
+ )]*
+ - **selection**: sets the selection function (check [Selection section](#selections)). *['wheel']*
     - *'Tournament'*:
-    - *'Wheel'*:
- - **crossover** sets the crossover operator (check 
-[Crossovers section](#crossovers)) ['blend']
-    - *'one-point'*:
-    - *'one-point-permutation'*:
-    - *'two-point'*:
-    - *'blend'*:
- - **mutation**: sets the mutation operator(check 
-[Mutation section](#mutations)) ['non-uniform']
-    - *'pos-swap'*:
-    - *'uniform'*:
+    - *'Wheel'*
+ - **crossover**: sets the crossover operator (check [Crossovers section](#crossovers)). *['blend']*
+    - *'one-point'*
+    - *'one-point-permutation'*
+    - *'two-point'*
+    - *'blend'*
+ - **mutation**: sets the mutation operator(check [Mutation section](#mutations)). *['non-uniform']*
+    - *'pos-swap'*
+    - *'uniform'*
     - *'non-uniform'*:
-    - *'gaussian'*:
- - **replacement**: (check 
-[Replacement section](#replacements)) ['elitist']
+    - *'gaussian'*
+ - **replacement**: (check [Replacement section](#replacements)). *['elitist']*
     - *'Elitist'*:
     - *'Worst-parents'*:
- - **tournament_competitors**: number of competitors in the tournament selection. [3]
- - **tournament_winners**: number of winners in the tournament selection. [1]
- - **replacement_elitism**: rate of eletism for the eletist replacement. [0.5]
+ - **tournament_competitors**: number of competitors in the tournament selection. *[3]*
+ - **tournament_winners**: number of winners in the tournament selection. *[1]*
+ - **replacement_elitism**: rate of eletism for the eletist replacement. *[0.5]*
 
 ## Initializations
-[TODO]
+[TODO]: rewrite and explain each method
 - **uniform** uses a uniform distribution to sample the elements.
 - **permutation** creates a permutation of *N* elements.
 
 ## Selections
-[TODO]
+[TODO]: rewrite and explain each method
 - **wheel**: sample from the parents population with a probability of each member proportional to the value of their fitness
 - **tournament**:
 
 ## Mutations
-[TODO]
+[TODO]: rewrite and explain each method
 - **position swap**:
 - **uniform**:
 - **non-uniform**:
 - **gaussian**: (Note: this is the mutation used for Evolutionary Strategies (es))
 
 ## Crossovers
-[TODO]
+[TODO]: rewrite and explain each method
 - **one-point**:
 - **one-point (permutation)**:
 - **two-point**:
 - **blend**:
 
 ## Replacements
-[TODO]
+[TODO]: rewrite and explain each method
 - **worst-fitness**: removes the chromosomes inside the parensts population with the worst fitness.
 - **elitist**:
 
@@ -164,8 +161,7 @@ eal_es = EAL(
 eal_es.fit(type="es")
 ```
 
-Graph returned after the 1000 iterations using an Evolutionary Strategy with Tournament selection, no
-Crossover, Gaussian mutation with a global sigma value and Elitist replacement. It tries to find the global minima in the
+Graph returned after the 1000 iterations using an Evolutionary Strategy with Tournament selection, it doesn't apply any croosover operator, Gaussian mutation with a global sigma value and Elitist replacement. It tries to find the global minima in the
 Ackley Function with a mutation probability of 0.1. The number of 
 chromosomes in the population is 50 and the number of generated children is also 50.
 

@@ -6,6 +6,7 @@
 from __future__ import division
 import numpy as np
 
+
 def uniform(n_population, lower, upper, N):
     """
     Function to initialize the population.
@@ -24,6 +25,7 @@ def uniform(n_population, lower, upper, N):
         population = np.concatenate((population, [np.random.uniform(lower[i], upper[i], N)]))
     return population
 
+
 def permutation(n_population, N):
     """
     Function to initialize the population. Each member of the population
@@ -33,6 +35,6 @@ def permutation(n_population, N):
     :return:
     """
     population = [np.random.permutation(N)]
-    for i in range(n_population-1):
+    for i in range(n_population - 1):
         population = np.concatenate((population, [np.random.permutation(N)]))
     return population

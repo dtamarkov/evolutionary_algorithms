@@ -9,10 +9,11 @@ import intializations
 import selections
 from ...optim_functions import *
 
+
 class Genetic_algorithm(object):
     """
     """
-        
+
     def __init__(self, initialization, selection, mutation, crossover, survivals, fitness_function, bounds):
         """
         """
@@ -23,7 +24,7 @@ class Genetic_algorithm(object):
         self.survivals = survivals
         self.lower = bounds[0]
         self.upper = bounds[1]
-        
+
     def iterate(n_population=100, n_dimensions=2, prob_xover=1, prob_mutation=0.8, n_iterations=100):
         """
         """
@@ -40,8 +41,3 @@ class Genetic_algorithm(object):
             children = self.crossover(parents, 1)
             children = self.mutation(children, 0.8, self.upper, lower, i, n_iterations)
             population = self.survivals(population, fitness, children)
-
-
-
-
-   

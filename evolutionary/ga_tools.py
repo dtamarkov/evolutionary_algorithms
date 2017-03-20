@@ -6,6 +6,20 @@
 import numpy as np
 
 
+def check(assertion, message):
+    """
+    Test function that receives two vars.
+    assertion is a boolean which should be true in order to avoid to throw an exception
+    message is an string with the error message to show if the exception is thrown
+    If it doesn't pass the assertion it raises an exception.
+    """
+    try:
+        assert assertion
+    except AssertionError as e:
+        e.args += message
+        raise
+
+
 def wheel_prob(fitness, minimize):
     """
     :param fitness:

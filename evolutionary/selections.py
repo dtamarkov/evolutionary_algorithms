@@ -8,20 +8,6 @@ import numpy as np
 import ga_tools as ga_tools
 
 
-def _check(assertion, message):
-    """
-    Test function that receives two vars.
-    assertion is a boolean which should be true in order to avoid to throw an exception
-    message is an string with the error message to show if the exception is thrown
-    If it doesn't pass the assertion it raises an exception.
-    """
-    try:
-        assert assertion
-    except AssertionError as e:
-        e.args += message
-        raise
-
-
 def _random_n(N, chromosomes):
     # shuffle the parents to prevent any correlation
     shuffle = np.arange(len(chromosomes))
@@ -46,7 +32,6 @@ def tournament(fitness, N=5, M=2, iterations=1, minimize=True):
     # Initialize the array that we will return
     indices = np.array([])
     for i in range(iterations):
-
         # Select a subgroup of parents
         random_parents = _random_n(N, fitness)
         idx = ga_tools.n_sort(fitness[random_parents], M, minimize)
@@ -76,7 +61,7 @@ def wheel(fitness, M, replacement=True, minimize=True):
     # print fitness[random_parents], wheel_prob, np.sum(wheel_prob)
     # Sample M indices from random_parents with the calculated probabilities
     indices = np.random.choice(np.arange(0, len(fitness)),
-                                                   M, replace=replacement, p=wheel_prob)
+                               M, replace=replacement, p=wheel_prob)
 
     # Return the indices as an array of integers
     indices = indices.astype(np.int64)

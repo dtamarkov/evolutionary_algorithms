@@ -5,22 +5,10 @@
 """
 from __future__ import division
 import numpy as np
+import ga_tools as ga_tools
 
 U = np.random.uniform
 N = np.random.normal
-
-
-def _check(assertion, message):
-    """
-    :param assertion: test parameter, it is a boolean
-    :param message: message to show in case assertion is equal to False
-    :return: raise an exception if the assrtion is false
-    """
-    try:
-        assert assertion
-    except AssertionError as e:
-        e.args += message
-        raise
 
 
 def pos_swap(chromosomes, prob):
@@ -30,13 +18,13 @@ def pos_swap(chromosomes, prob):
     :param prob:
     :return:
     """
-    _check(len(chromosomes) > 0, "The population cannot be an empty matrix")
+    ga_tools._check(len(chromosomes) > 0, "The population cannot be an empty matrix")
 
     # Convert to 2D matrix if it is a 1D array
     if len(chromosomes.shape) == 1:
         chromosomes = np.array([chromosomes])
 
-    _check(len(chromosomes.shape) == 2, "The chromosomes can only be a 1D array or 2D matrix")
+    ga_tools._check(len(chromosomes.shape) == 2, "The chromosomes can only be a 1D array or 2D matrix")
 
     for row in chromosomes:
         if U(0, 1) < prob:
@@ -57,7 +45,7 @@ def uniform(chromosomes, prob, upper, lower):
     :param lower:
     :return:
     """
-    _check(len(chromosomes) > 0, "The population cannot be an empty matrix")
+    ga.tools.check(len(chromosomes) > 0, "The population cannot be an empty matrix")
 
     # Convert to 2D matrix if it is a 1D array
     if len(chromosomes.shape) == 1:
@@ -67,7 +55,7 @@ def uniform(chromosomes, prob, upper, lower):
     if len(lower.shape) == 1:
         lower = np.array([lower])
 
-    _check(len(chromosomes.shape) == 2, "The chromosomes can only be a 1D array or 2D matrix")
+    ga.tools.check(len(chromosomes.shape) == 2, "The chromosomes can only be a 1D array or 2D matrix")
 
     # Create matrix of booleans that determine wether to mutate or not
     to_mutate = U(0, 1, chromosomes.shape) < prob
@@ -104,7 +92,7 @@ def non_uniform(chromosomes, prob, upper, lower, t, tmax, b=5.):
     :param b:
     :return:
     """
-    _check(len(chromosomes) > 0, "The population cannot be an empty matrix")
+    ga_tools.check(len(chromosomes) > 0, "The population cannot be an empty matrix")
 
     # Convert to 2D matrix if it is a 1D array
     if len(chromosomes.shape) == 1:
@@ -114,7 +102,7 @@ def non_uniform(chromosomes, prob, upper, lower, t, tmax, b=5.):
     if len(lower.shape) == 1:
         lower = np.array([lower])
 
-    _check(len(chromosomes.shape) == 2, "The chromosomes can only be a 1D array or 2D matrix")
+    ga_tools.check(len(chromosomes.shape) == 2, "The chromosomes can only be a 1D array or 2D matrix")
 
     # Create matrix of booleans that determine wether to mutate or not
     to_mutate = U(0, 1, chromosomes.shape) < prob
@@ -153,7 +141,7 @@ def gaussian(chromosomes, prob, lower, upper, sigma):
     :param sigma:
     :return:
     """
-    _check(len(chromosomes) > 0, "The chromosomes population cannot be an empty matrix")
+    ga_tools.check(len(chromosomes) > 0, "The chromosomes population cannot be an empty matrix")
 
     # Create matrix of booleans that determine wether to mutate or not
     to_mutate = U(0, 1, chromosomes.shape) < prob
