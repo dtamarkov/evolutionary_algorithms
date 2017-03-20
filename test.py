@@ -65,11 +65,20 @@ lower = upper * (-1)
 #
 # # a.fit(type="ga", iter_log=100)
 # b.fit(type="es", iter_log=50)
+#
+
+# if True:
+#     prueba = 1
+#
+# prueba += 1
+# print (prueba)
+
 upper = np.ones(10) * 32
 lower = np.ones(10) * -32
 
 aux_delta = np.array([(upper[0] - lower[0]) / 10])
-aux_s = [np.arange(np.floor(lower[0] / aux_delta[-1]), np.floor(upper[0] / aux_delta[-1]))]
+space_s = np.arange(np.floor(lower[0] / aux_delta[-1]), np.floor(upper[0] / aux_delta[-1])).astype(int)
+aux_s = space_s[np.random.randint(len(space_s))]
 aux_alpha = np.random.uniform(0, aux_delta)
 
 # Calculate taking into account that each dimension could have a different upper or lower bound
@@ -78,9 +87,8 @@ for i in range(len(upper[1:])):
     aux_delta = np.hstack((aux_delta, (upper[i] - lower[i]) / 10))
 
     # Get the values of S according to delta
-    aux_s = np.vstack((aux_s, np.arange(np.floor(lower[i] / aux_delta[-1]), np.floor(upper[i] / aux_delta[-1]))))
-
-    #
+    space_s = np.vstack(
+        (space_s, np.arange(np.floor(lower[i] / aux_delta[-1]), np.floor(upper[i] / aux_delta[-1])).astype(int)))
+    aux_s = np.hstack((aux_s, space_s[-1][np.random.randint(len(space_s[-1]))]))
+    # Sample the alpha values between 0 and delta from a uniform distribution
     aux_alpha = np.hstack((aux_alpha, np.random.uniform(0, aux_delta[-1])))
-
-print (aux_delta, aux_s, aux_alpha)

@@ -40,6 +40,7 @@ class EAL(object):
                  tournament_winners=1,
                  replacement_elitism=0.5,
                  delta=1,
+                 alpha_prob=0.9
                  ):
         """
 
@@ -79,6 +80,7 @@ class EAL(object):
         self.tournament_winners = tournament_winners
         self.replacement_elitism = replacement_elitism
         self.delta = delta
+        self.alpha_prob = alpha_prob
 
     def fit(self, type="ga", iter_log=50):
         """
@@ -134,9 +136,11 @@ class EAL(object):
                 else:
                     raise ValueError("The specified initialization doesn't match. Stopping the algorithm")
             elif type == "gga":
+
                 # Initialize vars
                 aux_delta = np.array([(upper[0] - lower[0]) / 10])
-                aux_s = [np.arange(np.floor(lower[0] / aux_delta[-1]), np.floor(upper[0] / aux_delta[-1]))]
+                space_s = np.arange(np.floor(lower[0] / aux_delta[-1]), np.floor(upper[0] / aux_delta[-1])).astype(int)
+                aux_s = space_s[np.random.randint(len(space_s))]
                 aux_alpha = np.random.uniform(0, aux_delta)
 
                 # Calculate taking into account that each dimension could have a different upper or lower bound
@@ -144,10 +148,14 @@ class EAL(object):
                     # Compute the delta value for the dimension and add it to the array of deltas
                     aux_delta = np.hstack((aux_delta, (upper[i] - lower[i]) / 10))
 
-                    # Get the values of S according to delta
-                    aux_s = np.vstack(
-                        (aux_s, np.arange(np.floor(lower[i] / aux_delta[-1]), np.floor(upper[i] / aux_delta[-1]))))
+                    # Discretize the search space with the values of the bounds for the dimension i
+                    space_s = np.vstack((space_s,
+                                         np.arange(np.floor(lower[i] / aux_delta[-1]),
+                                                   np.floor(upper[i] / aux_delta[-1])).astype(int)))
 
+                    # Get the position by sampling one point in the space
+                    aux_s = np.hstack((aux_s, space_s[-1][np.random.randint(len(space_s[-1]))]))
+                    
                     # Sample the alpha values between 0 and delta from a uniform distribution
                     aux_alpha = np.hstack((aux_alpha, np.random.uniform(0, aux_delta[-1])))
 
@@ -190,6 +198,11 @@ class EAL(object):
                     raise ValueError("The specified selection doesn't match. Not applying the selection operation")
                 parents = population.chromosomes[idx]
 
+                # If the Algorithm is a Grid/based genetic algorithm create the s and alpha vars
+                if type == "gga":
+                    parents_s = population.s[idx]
+                    parents_alpha = population.s[idx]
+
                 # Use recombination to generate new children
                 if not self.crossover:
                     warnings.warn("Warning: Crossover won't be applied")
@@ -209,19 +222,21 @@ class EAL(object):
                         if type == "ga":
                             children = crossovers.one_point(parents, self.xover_prob)
                         elif type == "gga":
-
+                            # With probability xover_prob do the crossover. If we have to do the crossover we do it in both
+                            # s and alpha parameters
+                            # if np.random.uniform(0, 1) < self.xover_prob:
+                            children_s = crossovers.one_point(parents_s, self.xover_prob)
+                            children_alpha = crossovers.one_point(parents_alpha, self.xover_prob)
                 elif self.crossover == 'one_point_permutation':
                     if type != "ga":
                         raise ValueError(
-                            "The " + self.mutation +
-                            " mutation is supported only by genetic algorithms (ga)")
+                            "The " + self.mutation + " mutation is supported only by genetic algorithms (ga)")
                     else:
                         children = crossovers.one_point_permutation(parents, self.xover_prob)
                 elif self.crossover == 'two_point':
                     if type != "ga":
                         raise ValueError(
-                            "The " + self.mutation +
-                            " mutation is supported only by genetic algorithms (ga)")
+                            "The " + self.mutation + " mutation is supported only by genetic algorithms (ga)")
                     else:
                         children = crossovers.two_point(parents, self.xover_prob)
                 else:
@@ -233,33 +248,37 @@ class EAL(object):
                 elif self.mutation == 'non_uniform':
                     if type != "ga":
                         raise ValueError(
-                            "The " + self.mutation +
-                            " mutation is supported only by genetic algorithms (ga)")
+                            "The " + self.mutation + " mutation is only supported by genetic algorithms (ga)")
                     else:
                         children = mutations.non_uniform(children, self.mutat_prob, upper[idx], lower[idx],
                                                          i, self.n_iterations)
                 elif self.mutation == 'uniform':
                     if type != "ga":
                         raise ValueError(
-                            "The " + self.mutation +
-                            " mutation is supported only by genetic algorithms")
+                            "The " + self.mutation + " mutation is only supported by genetic algorithms (ga)")
                     else:
                         children = mutations.uniform(children, self.mutat_prob, upper[idx], lower[idx])
                 elif self.mutation == 'swap':
                     if type != "ga":
                         raise ValueError(
-                            "The " + self.mutation +
-                            " mutation is supported only by genetic algorithms")
+                            "The " + self.mutation + " mutation is only supported by genetic algorithms (ga)")
                     else:
                         children = mutations.pos_swap(children, self.mutat_prob)
                 elif self.mutation == 'gaussian':
                     if type != "es":
                         raise ValueError(
-                            "The " + self.mutation +
-                            " mutation is supported only by evolutionary strategies (es)")
+                            "The " + self.mutation + " mutation is only supported by evolutionary strategies (es)")
                     else:
                         children, population.sigma = mutations.gaussian(parents, self.mutat_prob, lower, upper,
                                                                         population.sigma)
+                elif self.mutation == 'gga-mutation':
+                    if type != "gga":
+                        raise ValueError(
+                            "The " + self.mutation + "mutation is only supported by the Grid Based Genetic Algorithms (gga)")
+                    else:
+                        children_s, children_alpha = mutations.gga(children_s, children_alpha, self.mutat_prob,
+                                                                   self.alpha_prob)
+
                 else:
                     raise ValueError("The specified mutation doesn't match. Not applying the mutation operation")
 

@@ -130,7 +130,6 @@ def non_uniform(chromosomes, prob, upper, lower, t, tmax, b=5.):
     return chromosomes
 
 
-# TODO change population object so it has [chromosome, sigma]
 def gaussian(chromosomes, prob, lower, upper, sigma):
     """
 
@@ -160,3 +159,19 @@ def gaussian(chromosomes, prob, lower, upper, sigma):
     chromosomes = np.minimum.reduce([chromosomes, upper])
 
     return chromosomes, sigma
+
+
+def gga(s, alpha, prob, prob_alpha):
+    """
+
+    :param s:
+    :param alpha:
+    :param prob:
+    :param prob_alpha:
+    :return:
+    """
+    ga_tools.check(len(s) > 0, "S cannot be an empty array")
+    ga_tools.check(len(alpha) > 0, "Alpha cannot be an empty array")
+    ga_tools.check(len(s) == len(alpha), "alpha and S must have the same size")
+
+    to_mutate = U(0, 1, alpha.shape) < prob
