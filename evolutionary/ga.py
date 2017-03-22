@@ -136,35 +136,8 @@ class EAL(object):
                 else:
                     raise ValueError("The specified initialization doesn't match. Stopping the algorithm")
             elif type == "gga":
-
-                # Initialize vars
-                aux_delta = np.array([(upper[0] - lower[0]) / 10])
-                space_s = np.arange(np.floor(lower[0] / aux_delta[-1]), np.floor(upper[0] / aux_delta[-1])).astype(int)
-                aux_s = space_s[np.random.randint(len(space_s))]
-                aux_alpha = np.random.uniform(0, aux_delta)
-
-                # Calculate taking into account that each dimension could have a different upper or lower bound
-                for i in range(len(upper[1:])):
-                    # Compute the delta value for the dimension and add it to the array of deltas
-                    aux_delta = np.hstack((aux_delta, (upper[i] - lower[i]) / 10))
-
-                    # Discretize the search space with the values of the bounds for the dimension i
-                    space_s = np.vstack((space_s,
-                                         np.arange(np.floor(lower[i] / aux_delta[-1]),
-                                                   np.floor(upper[i] / aux_delta[-1])).astype(int)))
-
-                    # Get the position by sampling one point in the space
-                    aux_s = np.hstack((aux_s, space_s[-1][np.random.randint(len(space_s[-1]))]))
-                    
-                    # Sample the alpha values between 0 and delta from a uniform distribution
-                    aux_alpha = np.hstack((aux_alpha, np.random.uniform(0, aux_delta[-1])))
-
-                # Initialize the Population class with delta, s and alpha
-                population = Population(
-                    delta=aux_delta,
-                    s=aux_s.astype(int),
-                    alpha=aux_alpha
-                )
+                population = Population()
+                population.gga_initialization(upper, lower, self.n_population)
                 population.chromosomes = population.gga_chromosome()
             else:
                 raise ValueError(

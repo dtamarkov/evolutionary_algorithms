@@ -73,22 +73,35 @@ lower = upper * (-1)
 # prueba += 1
 # print (prueba)
 
+from evolutionary import tools
+
 upper = np.ones(10) * 32
 lower = np.ones(10) * -32
-
-aux_delta = np.array([(upper[0] - lower[0]) / 10])
-space_s = np.arange(np.floor(lower[0] / aux_delta[-1]), np.floor(upper[0] / aux_delta[-1])).astype(int)
-aux_s = space_s[np.random.randint(len(space_s))]
-aux_alpha = np.random.uniform(0, aux_delta)
-
-# Calculate taking into account that each dimension could have a different upper or lower bound
-for i in range(len(upper[1:])):
-    # Compute the delta value for the dimension and add it to the array of deltas
-    aux_delta = np.hstack((aux_delta, (upper[i] - lower[i]) / 10))
-
-    # Get the values of S according to delta
-    space_s = np.vstack(
-        (space_s, np.arange(np.floor(lower[i] / aux_delta[-1]), np.floor(upper[i] / aux_delta[-1])).astype(int)))
-    aux_s = np.hstack((aux_s, space_s[-1][np.random.randint(len(space_s[-1]))]))
-    # Sample the alpha values between 0 and delta from a uniform distribution
-    aux_alpha = np.hstack((aux_alpha, np.random.uniform(0, aux_delta[-1])))
+#
+# aux_delta = np.array([(upper[0] - lower[0]) / 10])
+# space_s = np.arange(np.floor(lower[0] / aux_delta[-1]), np.floor(upper[0] / aux_delta[-1])).astype(int)
+# aux_s = space_s[np.random.randint(len(space_s))]
+# aux_alpha = np.random.uniform(0, aux_delta)
+#
+# # Calculate taking into account that each dimension could have a different upper or lower bound
+# for i in range(len(upper[1:])):
+#     # Compute the delta value for the dimension and add it to the array of deltas
+#     aux_delta = np.hstack((aux_delta, (upper[i] - lower[i]) / 10))
+#
+#     # Get the values of S according to delta
+#     space_s = np.vstack(
+#         (space_s, np.arange(np.floor(lower[i] / aux_delta[-1]), np.floor(upper[i] / aux_delta[-1])).astype(int)))
+#     aux_s = np.hstack((aux_s, space_s[-1][np.random.randint(len(space_s[-1]))]))
+#     # Sample the alpha values between 0 and delta from a uniform distribution
+#     aux_alpha = np.hstack((aux_alpha, np.random.uniform(0, aux_delta[-1])))
+#
+# print aux_alpha
+# print aux_delta
+# print aux_s
+# print space_s
+p = tools.Population()
+delta, alpha, s, space = p.gga_initialization(upper, lower, 10)
+print (delta, delta.shape)
+print (alpha, alpha.shape)
+print (s, s.shape)
+print (str(s*delta + alpha))
