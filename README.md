@@ -6,7 +6,8 @@ The following library wraps the evolutionary process of the evolutionary algorit
 It has a modular structure that makes easy to implement new operators for the selection, crossover, mutation, replacement operations or optimization functions.
 
 The EAL library includes:
-- [x] Logger
+- [x] Single-run Logger
+- [ ] Multi-run Logger
 - [x] Optimization Functions
 - [x] Built-in simple mutations
 - [x] Built-in simple crossovers
@@ -15,6 +16,7 @@ The EAL library includes:
 - [x] Genetic Algorithms process
 - [x] Evolutionary strategies process (simple version (1 sigma))
 - [ ] Evolutionary strategies (array of sigmas)
+- [ ] [A Grid-based Genetic Algorithm for Multimodal Real Function Optimization](http://www.ia.uned.es/~ejcarmona/publicaciones/[2012-Chaquet&Carmona]%20ECTA-2012.pdf) by Jose Chaquet and Enrique Carmona
 
 ## Optimization functions
 The optimization functions are adepted pieces of code obtained from the [web](https://www.sfu.ca/~ssurjano/)
