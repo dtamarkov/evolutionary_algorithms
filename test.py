@@ -99,9 +99,20 @@ lower = np.ones(10) * -32
 # print aux_delta
 # print aux_s
 # print space_s
+upper = np.array([32,32,32])
+lower = upper * -1
 p = tools.Population()
-delta, alpha, s, space = p.gga_initialization(upper, lower, 10)
-print (delta, delta.shape)
-print (alpha, alpha.shape)
-print (s, s.shape)
-print (str(s*delta + alpha))
+print (p.gga_initialization(upper, lower, 10, 20))
+print (p.s)
+print (p.alpha)
+print (p.delta)
+
+# print (a)
+# print np.repeat(np.array([[1, 2, 3]]), 10, axis=0)
+
+# a = np.array([1.,2.,3.,4.])
+# b = np.array([4.,3.,2.,1.])
+# print (a > b)
+# a[a>2] -= b[a>2]
+# print (a)
+# aux_s = np.random.randint(np.array([0,0]), np.array([1,1]))

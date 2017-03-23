@@ -39,8 +39,10 @@ class EAL(object):
                  tournament_competitors=3,
                  tournament_winners=1,
                  replacement_elitism=0.5,
-                 delta=1,
-                 alpha_prob=0.9
+                 alpha_prob=0.9,
+                 control_alpha=10 ** -2,
+                 control_s=6,
+                 grid_intervals=20
                  ):
         """
 
@@ -60,6 +62,9 @@ class EAL(object):
         :param mutation:
         :param replacement:
         :param delta: Parameter used in GGA(Grid-based Genetic Algorithms)
+        :param control_alpha: Parameter used in GGA(Grid-based Genetic Algorithms)
+        :param control_s: Parameter used in GGA(Grid-based Genetic Algorithms)
+        :param grid_intervals: Parameter used in GGA(Grid-based Genetic Algorithms)
         """
 
         self.n_dimensions = n_dimensions
@@ -79,8 +84,10 @@ class EAL(object):
         self.tournament_competitors = tournament_competitors
         self.tournament_winners = tournament_winners
         self.replacement_elitism = replacement_elitism
-        self.delta = delta
         self.alpha_prob = alpha_prob
+        self.control_alpha = control_alpha
+        self.control_s = control_s
+        self.grid_intervals = grid_intervals
 
     def fit(self, type="ga", iter_log=50):
         """
@@ -137,8 +144,7 @@ class EAL(object):
                     raise ValueError("The specified initialization doesn't match. Stopping the algorithm")
             elif type == "gga":
                 population = Population()
-                population.gga_initialization(upper, lower, self.n_population)
-                population.chromosomes = population.gga_chromosome()
+                upper_s, lower_s = population.gga_initialization(upper, lower, self.n_population)
             else:
                 raise ValueError(
                     "The defined Strategy type doesn't match with a Genetic Algoritghm (ga), Evolution Strategy (es) nor Grid-based Genetic Algorithm (GGA)")
@@ -249,8 +255,9 @@ class EAL(object):
                         raise ValueError(
                             "The " + self.mutation + "mutation is only supported by the Grid Based Genetic Algorithms (gga)")
                     else:
-                        children_s, children_alpha = mutations.gga(children_s, children_alpha, self.mutat_prob,
-                                                                   self.alpha_prob)
+                        children_s, children_alpha = mutations.gga(children_s, children_alpha, self.control_alpha,
+                                                                   self.control_s, self.mutat_prob,
+                                                                   self.alpha_prob, upper_s, lower_s)
 
                 else:
                     raise ValueError("The specified mutation doesn't match. Not applying the mutation operation")

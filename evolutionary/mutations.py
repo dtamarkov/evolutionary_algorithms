@@ -45,7 +45,7 @@ def uniform(chromosomes, prob, upper, lower):
     :param lower:
     :return:
     """
-    ga.tools.check(len(chromosomes) > 0, "The population cannot be an empty matrix")
+    ga_tools.check(len(chromosomes) > 0, "The population cannot be an empty matrix")
 
     # Convert to 2D matrix if it is a 1D array
     if len(chromosomes.shape) == 1:
@@ -55,7 +55,7 @@ def uniform(chromosomes, prob, upper, lower):
     if len(lower.shape) == 1:
         lower = np.array([lower])
 
-    ga.tools.check(len(chromosomes.shape) == 2, "The chromosomes can only be a 1D array or 2D matrix")
+    ga_tools.check(len(chromosomes.shape) == 2, "The chromosomes can only be a 1D array or 2D matrix")
 
     # Create matrix of booleans that determine wether to mutate or not
     to_mutate = U(0, 1, chromosomes.shape) < prob
@@ -161,7 +161,7 @@ def gaussian(chromosomes, prob, lower, upper, sigma):
     return chromosomes, sigma
 
 
-def gga(s, alpha, prob, prob_alpha):
+def gga(s, alpha, delta, control_alpha, control_s, prob, prob_alpha, upper_s, lower_s):
     """
 
     :param s:
@@ -172,6 +172,46 @@ def gga(s, alpha, prob, prob_alpha):
     """
     ga_tools.check(len(s) > 0, "S cannot be an empty array")
     ga_tools.check(len(alpha) > 0, "Alpha cannot be an empty array")
-    ga_tools.check(len(s) == len(alpha), "alpha and S must have the same size")
+    ga_tools.check(s.shape == alpha.shape, "alpha and S must have the same size")
+
+    def geometric(dispersion):
+        """
+        :param dispersion: dispersion parameter of the geometric distribution
+        :return: the function creates a geometrical distribution variable from a uniform distribution
+        """
+        u = U(0, 1)
+        psi = 1 - (dispersion / (1 + np.sqrt(1 + dispersion ** 2)))
+        return np.floor(np.log(1 - u) / np.log(1 - psi))
 
     to_mutate = U(0, 1, alpha.shape) < prob
+    alpha_mutation = U(0, 1, alpha.shape) < prob_alpha
+
+    for i in range(len(s)):
+        for j in range(len(s[i])):
+            # Check if the gene has to be mutated
+            if to_mutate:
+                # Check which kind of mutation to apply
+                if alpha_mutation:
+                    alpha[i, j] += U(-delta[i, j] * control_alpha, delta[i, j] * control_alpha)
+                else:
+                    s[i, j] += geometric(control_s) - geometric(control_s)
+
+    # Check that the alpha values are not lower than 0
+    mask = alpha < 0
+    alpha[mask] += delta[mask]
+    s[mask] -= 1
+
+    # Check that the alpha values are not bigger than its corresponding delta
+    mask = alpha > delta
+    alpha[mask] -= delta[mask]
+    s[mask] += 1
+
+    # Check that s is inside the upper bounds of the discretized space
+    mask = s > upper_s
+    s[mask] = upper_s[mask]
+
+    # Check that s is inside the lower bounds of the discretized space
+    mask = s < lower_s
+    s[mask] = lower_s[mask]
+
+    return alpha, s

@@ -33,6 +33,11 @@ In particular, the library has implemented the following functions:
 - **Powell**
 - **Zakharov**
 
+To implement:
+
+- Rastrigin
+- Schwefel
+
 An example of the functions plotted can be found [here](notebooks/functions_visualization.ipynb)
 
 ## EAL class
