@@ -189,9 +189,9 @@ def gga(s, alpha, delta, control_alpha, control_s, prob, prob_alpha, upper_s, lo
     for i in range(len(s)):
         for j in range(len(s[i])):
             # Check if the gene has to be mutated
-            if to_mutate:
+            if to_mutate[i, j]:
                 # Check which kind of mutation to apply
-                if alpha_mutation:
+                if alpha_mutation[i, j]:
                     alpha[i, j] += U(-delta[i, j] * control_alpha, delta[i, j] * control_alpha)
                 else:
                     s[i, j] += geometric(control_s) - geometric(control_s)
@@ -214,4 +214,4 @@ def gga(s, alpha, delta, control_alpha, control_s, prob, prob_alpha, upper_s, lo
     mask = s < lower_s
     s[mask] = lower_s[mask]
 
-    return alpha, s
+    return s, alpha

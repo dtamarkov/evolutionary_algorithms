@@ -144,7 +144,7 @@ class EAL(object):
                     raise ValueError("The specified initialization doesn't match. Stopping the algorithm")
             elif type == "gga":
                 population = Population()
-                upper_s, lower_s = population.gga_initialization(upper, lower, self.n_population)
+                upper_s, lower_s = population.gga_initialization(upper, lower, self.n_population, self.grid_intervals)
             else:
                 raise ValueError(
                     "The defined Strategy type doesn't match with a Genetic Algoritghm (ga), Evolution Strategy (es) nor Grid-based Genetic Algorithm (GGA)")
@@ -180,7 +180,7 @@ class EAL(object):
                 # If the Algorithm is a Grid/based genetic algorithm create the s and alpha vars
                 if type == "gga":
                     parents_s = population.s[idx]
-                    parents_alpha = population.s[idx]
+                    parents_alpha = population.alpha[idx]
 
                 # Use recombination to generate new children
                 if not self.crossover:
@@ -192,7 +192,7 @@ class EAL(object):
                             " mutation is supported only by genetic algorithms (ga)")
                     else:
                         children = crossovers.blend(parents, self.xover_prob, upper[idx], lower[idx])
-                elif self.crossover == 'one_point':
+                elif self.crossover == 'one-point':
                     if type != "ga" and type != "gga":
                         raise ValueError(
                             "The " + self.mutation +
@@ -206,13 +206,13 @@ class EAL(object):
                             # if np.random.uniform(0, 1) < self.xover_prob:
                             children_s = crossovers.one_point(parents_s, self.xover_prob)
                             children_alpha = crossovers.one_point(parents_alpha, self.xover_prob)
-                elif self.crossover == 'one_point_permutation':
+                elif self.crossover == 'one-point-permutation':
                     if type != "ga":
                         raise ValueError(
                             "The " + self.mutation + " mutation is supported only by genetic algorithms (ga)")
                     else:
                         children = crossovers.one_point_permutation(parents, self.xover_prob)
-                elif self.crossover == 'two_point':
+                elif self.crossover == 'two-point':
                     if type != "ga":
                         raise ValueError(
                             "The " + self.mutation + " mutation is supported only by genetic algorithms (ga)")
@@ -224,7 +224,7 @@ class EAL(object):
                 # Mutate the generated children
                 if not self.mutation:
                     warnings.warn("Warning: Mutation won't be applied")
-                elif self.mutation == 'non_uniform':
+                elif self.mutation == 'non-uniform':
                     if type != "ga":
                         raise ValueError(
                             "The " + self.mutation + " mutation is only supported by genetic algorithms (ga)")
@@ -255,12 +255,17 @@ class EAL(object):
                         raise ValueError(
                             "The " + self.mutation + "mutation is only supported by the Grid Based Genetic Algorithms (gga)")
                     else:
-                        children_s, children_alpha = mutations.gga(children_s, children_alpha, self.control_alpha,
+                        children_s, children_alpha = mutations.gga(children_s, children_alpha, population.delta,
+                                                                   self.control_alpha,
                                                                    self.control_s, self.mutat_prob,
                                                                    self.alpha_prob, upper_s, lower_s)
 
                 else:
                     raise ValueError("The specified mutation doesn't match. Not applying the mutation operation")
+
+                # If the strategy is a gga calculate the value of the childrens. The delta values remain as in the parents
+                if type == "gga":
+                    children = population.gga_chromosome(children_s, None, children_alpha)
 
                 # Replace the current chromosomes of parents and childrens to
                 # create the new chromosomes

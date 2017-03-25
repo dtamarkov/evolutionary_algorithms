@@ -29,23 +29,27 @@ lower = upper * (-1)
 # b = np.array([[4,1,2],[4,1,2]])
 # # print (np.hstack((a,b)))
 # print np.minimum.reduce([a,b])
-# from evolutionary import EAL, optim_functions as functions
+from evolutionary import EAL, optim_functions as functions
 #
-# a = EAL(
-#     seed=82634,
-#     minimization=False,
-#     problem=functions.Ackley,
-#     n_dimensions=10,
-#     n_population=100,
-#     n_iterations=1000,
-#     n_children=100,
-#     xover_prob=0.8,
-#     mutat_prob=0.1,
-#     selection='wheel',
-#     crossover='blend',
-#     mutation='non_uniform',
-#     replacement='elitist'
-# )
+a = EAL(
+    seed=82634,
+    minimization=False,
+    problem=functions.Ackley,
+    n_dimensions=10,
+    n_population=100,
+    n_iterations=1000,
+    n_children=100,
+    xover_prob=0.8,
+    mutat_prob=0.05,
+    selection='tournament',
+    crossover='one-point',
+    mutation='gga-mutation',
+    replacement='elitist',
+    grid_intervals=20,
+    alpha_prob=0.9,
+    control_alpha=10**-2,
+    control_s=6
+)
 #
 # b = EAL(
 #     seed=82634,
@@ -63,7 +67,7 @@ lower = upper * (-1)
 #     replacement='elitist'
 # )
 #
-# # a.fit(type="ga", iter_log=100)
+a.fit(type="gga", iter_log=100)
 # b.fit(type="es", iter_log=50)
 #
 
@@ -99,13 +103,13 @@ lower = np.ones(10) * -32
 # print aux_delta
 # print aux_s
 # print space_s
-upper = np.array([32,32,32])
-lower = upper * -1
-p = tools.Population()
-print (p.gga_initialization(upper, lower, 10, 20))
-print (p.s)
-print (p.alpha)
-print (p.delta)
+# upper = np.array([32,32,32])
+# lower = upper * -1
+# p = tools.Population()
+# print (p.gga_initialization(upper, lower, 10, 20))
+# print (p.s)
+# print (p.alpha)
+# print (p.delta)
 
 # print (a)
 # print np.repeat(np.array([[1, 2, 3]]), 10, axis=0)
