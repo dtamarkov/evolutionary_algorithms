@@ -179,9 +179,8 @@ def gga(s, alpha, delta, control_alpha, control_s, prob, prob_alpha, upper_s, lo
         :param dispersion: dispersion parameter of the geometric distribution
         :return: the function creates a geometrical distribution variable from a uniform distribution
         """
-        u = U(0, 1)
         psi = 1 - (dispersion / (1 + np.sqrt(1 + dispersion ** 2)))
-        return np.floor(np.log(1 - u) / np.log(1 - psi))
+        return np.floor(np.log(1 - U(0, 1)) / np.log(1 - psi))
 
     to_mutate = U(0, 1, alpha.shape) < prob
     alpha_mutation = U(0, 1, alpha.shape) < prob_alpha

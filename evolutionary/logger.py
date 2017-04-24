@@ -15,7 +15,7 @@ class Logger(object):
     as a graph.
     """
 
-    def __init__(self):
+    def __init__(self, iter_log):
         """
         Initializes the Logger object creating the dictionary of arrays
         to store the logged values
@@ -23,6 +23,7 @@ class Logger(object):
         """
         self.values = {}
         self.log_size = 0
+        self.iter_log = iter_log
 
     def add_log(self, logs):
         """
@@ -59,7 +60,12 @@ class Logger(object):
                 self.values[key] = np.hstack((self.values[key], values[key])) if key in self.values else  np.array(
                     values[key])
 
+        # Print the iteration result
+        if self.iter_log and (self.log_size+1) % self.iter_log == 0:
+            self.print_log(self.log_size)
+
         self.log_size += 1
+
 
     def get_log(self, key):
         """
@@ -114,11 +120,14 @@ class Logger(object):
         palette = sns.color_palette("hls", len(keys))
 
         i = 0
+        plotted_keys = np.array([])
         for key in self.values:
             # Avoid printing values logged as matrix
             if len(self.values[key].shape) == 1:
                 sns.plt.plot(np.arange(0, self.log_size), np.abs(self.values[key]), color=palette[i])
                 i += 1
+                plotted_keys = np.append(plotted_keys, key)
 
-        sns.plt.legend(keys, loc='upper right')
+        # Create the legend
+        sns.plt.legend(plotted_keys, loc='upper right')
         sns.plt.show()

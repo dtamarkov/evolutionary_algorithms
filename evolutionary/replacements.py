@@ -81,3 +81,4 @@ def worst_parents(parents, fitness, children, minimize=True):
 
     # return the new chromosomes
     return parents
+

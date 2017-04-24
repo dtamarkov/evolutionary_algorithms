@@ -48,6 +48,32 @@ def one_point(parents, prob=1):
     return parents
 
 
+def one_point_gga(parents_s, parents_alpha, prob=1):
+    """
+    It recombines a pair of parents to generate their childrens.
+    In order to do so it splits each parent in 2 halfs from the crossover point,
+    then it combinates the halfs of each of them to generate two new children
+    """
+
+    # Check the input var and shuffle the elements
+    ga_tools.check(len(parents_s) > 0, "The population S cannot be an empty matrix")
+    ga_tools.check(len(parents_s) > 0, "The population Alpha cannot be an empty matrix")
+
+
+
+    # Iterate over the parents taking them two by two and store the generated children
+    for i in range(0, len(parents_s), 2):
+        # Apply the crossover function with probability prob
+        if np.random.uniform(0, 1) <= prob:
+            # Get the crossover point
+            cp = np.random.randint(len(parents_s[i]))
+
+            # Recombine to generate their children
+            parents_s[i, cp:], parents_s[i + 1, cp:] = parents_s[i + 1, cp:], parents_s[i, cp:].copy()
+            parents_alpha[i, cp:], parents_alpha[i + 1, cp:] = parents_alpha[i + 1, cp:], parents_alpha[i, cp:].copy()
+
+    return parents_s, parents_alpha
+
 def one_point_permutation(parents, prob):
     """
     It recombines a pair of parents to generate their childrens.
