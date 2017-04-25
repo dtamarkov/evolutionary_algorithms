@@ -8,7 +8,6 @@ import numpy as np
 
 from .functions import Function
 
-
 class Schwefel(Function):
     """
 
@@ -33,7 +32,6 @@ class Schwefel(Function):
         # Check the var type of the population
         super(self.__class__, self)._check(str(type(population)) == "<type 'numpy.ndarray'>",
                                            'The population has to be a numpy array')
-        offset = 0.000127278374748
 
         # Case of matrix
         if len(population.shape) == 2:
@@ -43,15 +41,16 @@ class Schwefel(Function):
         sum = np.sum(population * np.sin(np.sqrt(np.abs(population))))
 
         # Return the value of the function
-        return (418.9829*len(population) - sum - offset) if self.minimize else -(418.9829*len(population) - sum - offset)
+        res = 418.982988 * len(population) - sum
+        return res if self.minimize else -res
 
-    def plot(self, d3=True, lower=-10, upper=10, samples=1000):
+    def plot(self, d3=True, samples=1000):
         """
         Makes a 2d plot using the parent class.
         It creates an array of samples between the upper and lower bounds
         and compute its fitness which will be plotted together.
         """
         if d3:
-            super(self.__class__, self).plot3d(lower, upper, samples)
+            super(self.__class__, self).plot3d(self.lower, self.upper, samples)
         else:
-            super(self.__class__, self).plot(lower, upper, samples)
+            super(self.__class__, self).plot(self.lower, self.upper, samples)

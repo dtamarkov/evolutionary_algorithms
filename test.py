@@ -6,13 +6,9 @@ from evolutionary import EAL, optim_functions as functions
 
 seeds = np.array([82634, 16345, 12397, 84567, 34523, 65831, 40986, 8652, 12345, 98765, 19285, 97531])
 
-# print functions.Schwefel().evaluate(np.ones(10)*420.9687)
-
-
 gga = EAL(
     goal = 10**-4,
     minimization=False,
-    problem=functions.Schwefel,
     n_dimensions=10,
     n_population=200,
     n_iterations=1000,
@@ -29,5 +25,8 @@ gga = EAL(
     control_s=6
 )
 
-gga.fit(type="gga", iter_log=100, seed=seeds[1])
+gga.fit(ea_type="gga",
+        problem=functions.Schwefel,
+        iter_log=-1,
+        seeds=seeds[0])
 

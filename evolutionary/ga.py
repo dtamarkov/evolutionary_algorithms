@@ -31,7 +31,6 @@ class EAL(object):
                  mutat_prob=0.1,
                  minimization=False,
                  initialization='uniform',
-                 problem=functions.Ackley,
                  selection='wheel',
                  crossover='blend',
                  mutation='non_uniform',
@@ -75,7 +74,6 @@ class EAL(object):
         self.mutat_prob = mutat_prob
         self.minimization = minimization
         self.initialization = initialization
-        self.problem = problem
         self.selection = selection
         self.crossover = crossover
         self.mutation = mutation
@@ -88,21 +86,27 @@ class EAL(object):
         self.control_s = control_s
         self.grid_intervals = grid_intervals
 
-    def fit(self, type="ga", iter_log=50, seed=12345):
+        np.set_printoptions(formatter={'float': lambda x: "{0:0.4f}".format(x)}, linewidth=np.nan)
+
+    def fit(self, problem=functions.Ackley,
+            ea_type="ga", iter_log=-1, seeds=np.array(12345)):
         """
 
+        :param ea_type:
         :param iter_log:
+        :param seed:
         :return:
         """
 
-        # Set a random generator seed to reproduce the same experiments
-        np.random.seed(seed)
-
         # Create the logger object to store the data during the evolutionary process
-        logger = Logger(iter_log=iter_log)
+        seeds = np.array([seeds]) if not type(seeds) is np.ndarray else seeds
+
+        # Initialize variables
+        logger = [Logger(iter_log=iter_log) for i in range(len(seeds))]
+        best = [None] * len(seeds)
 
         # Define the problem to solve and get its fitness function
-        problem = self.problem(minimize=self.minimization)
+        problem = problem(minimize=self.minimization)
         fitness_function = problem.evaluate
 
         # Set the dimensions of the problem
@@ -111,70 +115,53 @@ class EAL(object):
                           + str(self.n_dimensions) + " to " + str(problem.dim))
         self.n_dimensions = self.n_dimensions if not problem.dim else problem.dim
 
-        # Print a description of the problem
-        logger.print_description(problem.name, self.n_dimensions,
-                                 self.n_population, self.n_iterations,
-                                 self.xover_prob, self.mutat_prob)
-
         # Define the bounds to explore the problem
         upper = np.ones((self.n_population, self.n_dimensions)) * problem.upper
         lower = np.ones((self.n_population, self.n_dimensions)) * problem.lower  # Print the best value we have obtained
 
-        logger, best = _iterate(self, logger, upper, lower, fitness_function, type)
+        # Print a description of the problem
+        Logger(-1).print_description({"Problem to solve:": problem.name},
+                                     {"Strategy followed:": ea_type,
+                                      "Number of problem dimensions": self.n_dimensions,
+                                      "Size of the population": self.n_population,
+                                      "Max. number of iterations": self.n_iterations,
+                                      "Crossover probability": self.xover_prob,
+                                      "Mutation probability": self.mutat_prob})
 
-        if best.size:
-            res = "\n-----------------------------------------\n"
-            res += "Best individual:\n" + str(best)
-            res += "\n\t Fitness: " + str(fitness_function(best))
-            print(res)
+        for i in range(len(seeds)):
+            # Perform the evolutionary process
+            logger[i], best[i] = _iterate(self, logger[i], upper, lower, fitness_function, ea_type, seeds[i])
+            if len(best[i]) > 0:
+                # Print the results
+                logger[i].print_description({"Seed used:": seeds[i],
+                                             "Iteration": i+1},
+                                            best[i])
+                # Plot the graph with all the results
+                # logger.plot(np.array(['mean', 'worst', 'best']))
 
-            # Plot the graph with all the results
-            logger.plot()
 
-
-def fit(self, type="ga", seeds=np.array([12345])):
+def _iterate(self, logger, upper, lower, fitness_function, ea_type, seed):
     """
 
-    :param type:
-    :param seeds:
-    :return:
-    """
-
-    logger = Logger()
-
-    # Define the problem to solve and get its fitness function
-    problem = self.problem(minimize=self.minimization)
-    fitness_function = problem.evaluate
-
-    # Print a description of the problem
-    logger.print_description(problem.name, self.n_dimensions,
-                             self.n_population, self.n_iterations,
-                             self.xover_prob, self.mutat_prob)
-
-    # Define the bounds to explore the problem
-    upper = np.ones((self.n_population, self.n_dimensions)) * problem.upper
-    lower = np.ones((self.n_population, self.n_dimensions)) * problem.lower
-
-    for seed in seeds:
-        1 + 1
-
-
-def _iterate(self, logger, upper, lower, fitness_function, type):
-    """
-
+    :param self:
     :param logger:
     :param upper:
     :param lower:
     :param fitness_function:
+    :param ea_type:
+    :param seed:
     :return:
     """
+
+    # Set a random generator seed to reproduce the same experiments
+    np.random.seed(seed)
 
     try:
 
         ########################################################################################################
         # Create the class Population and initialize its chromosomes
         ########################################################################################################
-        if type == "ga":
+        if ea_type == "ga":
             if self.initialization == 'uniform':
                 population = Population(
                     chromosomes=initializations.uniform(self.n_population, lower,
@@ -184,7 +171,7 @@ def _iterate(self, logger, upper, lower, fitness_function, type):
                     chromosomes=initializations.permutation(self.n_population, self.n_dimensions))
             else:
                 raise ValueError("The specified initialization doesn't match. Stopping the algorithm")
-        elif type == "es":
+        elif ea_type == "es":
             if self.initialization == 'uniform':
                 population = Population(
                     chromosomes=initializations.uniform(self.n_population, lower,
@@ -194,7 +181,7 @@ def _iterate(self, logger, upper, lower, fitness_function, type):
                 raise ValueError("The permutation initialization is not allowed yet with an evolutionary strategy")
             else:
                 raise ValueError("The specified initialization doesn't match. Stopping the algorithm")
-        elif type == "gga":
+        elif ea_type == "gga":
             population = Population()
             upper_s, lower_s = population.gga_initialization(upper, lower, self.n_population, self.grid_intervals)
             children_alpha, children_s = None, None
@@ -204,32 +191,42 @@ def _iterate(self, logger, upper, lower, fitness_function, type):
 
         # Initialize vars for the evolutionary process
         iteration = 0
-        best_fitness = np.inf if self.minimization else -np.inf
-        best = None
+        best_fitness = np.inf  # if self.minimization else -np.inf
 
         # Iterate simulating the evolutionary process
-        while (iteration < self.n_iterations) and (
-                    self.goal < best_fitness if self.minimization else -self.goal > best_fitness):
+        while (iteration < self.n_iterations) and (self.goal < best_fitness):
+            # if self.minimization else -self.goal > best_fitness):
 
             # Apply the function in each row to get the array of fitness
             fitness = fitness_function(population.chromosomes)
 
-            # Log the values
-            logger.log({'mean': np.mean(fitness),
-                        'worst': np.max(fitness) if self.minimization else np.min(fitness),
-                        'best': np.min(fitness) if self.minimization else  np.max(fitness),
-                        'best_chromosome': population.chromosomes[np.argmin(fitness)] if self.minimization else
-                        population.chromosomes[np.argmax(fitness)]})
-            # Get the best chromosome
-            best = logger.get_log('best_chromosome')
-            if best.size:
-                if iteration >= 1:
-                    best = best[np.argmin(logger.get_log('best'))] if self.minimization else best[
-                        np.argmax(logger.get_log('best'))]
-                    best_fitness = fitness_function(best)
+            ############################################################################################################
+            # [LOGS] Log the values
+            ############################################################################################################
+            best_idx = np.argmin(fitness) if self.minimization else np.argmax(fitness)
 
-                else:
-                    best_fitness = fitness_function(best)
+            logger.log({'mean': np.abs(np.mean(fitness)),
+                        'worst': np.abs(np.max(fitness)) if self.minimization else np.abs(np.min(fitness)),
+                        'best': np.abs(np.min(fitness)) if self.minimization else  np.abs(np.max(fitness)),
+                        'best_chromosome': population.chromosomes[best_idx]})
+            if ea_type == 'gga':
+                logger.log({'best_s': population.s[best_idx],
+                            'best_alpha': population.alpha[best_idx]},
+                           count_it=False)
+
+            # Get the best chromosome and its features
+            if iteration >= 1:
+                idx_best = np.argmin(logger.get_log('best'))
+            else:
+                idx_best = 0
+
+            best_chromosome = logger.get_log('best_chromosome')[idx_best] if iteration > 0 else logger.get_log(
+                'best_chromosome')
+            best_fitness = logger.get_log('best')[idx_best]
+
+            if ea_type == 'gga':
+                best_s = logger.get_log('best_s')[idx_best] if iteration > 0 else logger.get_log('best_s')
+                best_alpha = logger.get_log('best_alpha')[idx_best] if iteration > 0 else logger.get_log('best_alpha')
 
             ########################################################################################################
             # [SELECTION] Select a subgroup of parents
@@ -246,7 +243,7 @@ def _iterate(self, logger, upper, lower, fitness_function, type):
             parents = population.chromosomes[idx]
 
             # If the Algorithm is a Grid/based genetic algorithm create the s and alpha vars
-            if type == "gga":
+            if ea_type == "gga":
                 parents_s = population.s[idx]
                 parents_alpha = population.alpha[idx]
 
@@ -257,34 +254,34 @@ def _iterate(self, logger, upper, lower, fitness_function, type):
                 warnings.warn("Warning: Crossover won't be applied")
 
             elif self.crossover == 'blend':
-                if type != "ga":
+                if ea_type != "ga":
                     raise ValueError(
                         "The " + self.mutation +
                         " mutation is supported only by genetic algorithms (ga)")
                 else:
                     children = crossovers.blend(np.copy(parents), self.xover_prob, upper[idx], lower[idx])
             elif self.crossover == 'one-point':
-                if type != "ga" and type != "gga":
+                if ea_type != "ga" and ea_type != "gga":
                     raise ValueError(
                         "The " + self.mutation +
                         " mutation is supported only by genetic algorithms (ga)")
                 else:
-                    if type == "ga":
+                    if ea_type == "ga":
                         children = crossovers.one_point(np.copy(parents), self.xover_prob)
-                    elif type == "gga":
+                    elif ea_type == "gga":
                         # With probability xover_prob do the crossover. If we have to do the crossover we do it in both
                         # s and alpha parameters
                         children_s, children_alpha = crossovers.one_point_gga(np.copy(parents_s),
                                                                               np.copy(parents_alpha),
                                                                               self.xover_prob)
             elif self.crossover == 'one-point-permutation':
-                if type != "ga":
+                if ea_type != "ga":
                     raise ValueError(
                         "The " + self.mutation + " mutation is supported only by genetic algorithms (ga)")
                 else:
                     children = crossovers.one_point_permutation(np.copy(parents), self.xover_prob)
             elif self.crossover == 'two-point':
-                if type != "ga":
+                if ea_type != "ga":
                     raise ValueError(
                         "The " + self.mutation + " mutation is supported only by genetic algorithms (ga)")
                 else:
@@ -298,33 +295,33 @@ def _iterate(self, logger, upper, lower, fitness_function, type):
             if not self.mutation:
                 warnings.warn("Warning: Mutation won't be applied")
             elif self.mutation == 'non-uniform':
-                if type != "ga":
+                if ea_type != "ga":
                     raise ValueError(
                         "The " + self.mutation + " mutation is only supported by genetic algorithms (ga)")
                 else:
                     children = mutations.non_uniform(children, self.mutat_prob, upper[idx], lower[idx], iteration,
                                                      self.n_iterations)
             elif self.mutation == 'uniform':
-                if type != "ga":
+                if ea_type != "ga":
                     raise ValueError(
                         "The " + self.mutation + " mutation is only supported by genetic algorithms (ga)")
                 else:
                     children = mutations.uniform(children, self.mutat_prob, upper[idx], lower[idx])
             elif self.mutation == 'swap':
-                if type != "ga":
+                if ea_type != "ga":
                     raise ValueError(
                         "The " + self.mutation + " mutation is only supported by genetic algorithms (ga)")
                 else:
                     children = mutations.pos_swap(children, self.mutat_prob)
             elif self.mutation == 'gaussian':
-                if type != "es":
+                if ea_type != "es":
                     raise ValueError(
                         "The " + self.mutation + " mutation is only supported by evolutionary strategies (es)")
                 else:
                     children, population.sigma = mutations.gaussian(parents, self.mutat_prob, lower, upper,
                                                                     population.sigma)
             elif self.mutation == 'gga-mutation':
-                if type != "gga":
+                if ea_type != "gga":
                     raise ValueError(
                         "The " + self.mutation + "mutation is only supported by the Grid Based Genetic Algorithms (gga)")
                 else:
@@ -335,7 +332,7 @@ def _iterate(self, logger, upper, lower, fitness_function, type):
                 raise ValueError("The specified mutation doesn't match. Not applying the mutation operation")
 
             # If the strategy is a gga calculate the value of the childrens. The delta values remain as in the parents
-            if type == "gga":
+            if ea_type == "gga":
                 children = population.gga_chromosome(children_s, population.delta[idx], children_alpha)
 
             ########################################################################################################
@@ -350,7 +347,7 @@ def _iterate(self, logger, upper, lower, fitness_function, type):
                 population.chromosomes = replacements.worst_parents(parents, fitness, children, self.minimization)
             elif self.replacement == 'generational':
                 population.chromosomes = children
-                if type == "gga":
+                if ea_type == "gga":
                     population.s = children_s
                     population.alpha = children_alpha
             else:
@@ -360,7 +357,14 @@ def _iterate(self, logger, upper, lower, fitness_function, type):
             iteration += 1
 
         # Return the logger object with the new data and the best chromosome
-        return logger, best
+        if ea_type == 'gga':
+            return logger, {'Best chromosome': best_chromosome,
+                            'Fitness': best_fitness,
+                            'S value': best_s,
+                            'Alpha value': best_alpha}
+        else:
+            return logger, {'Best chromosome': best_chromosome,
+                            'Fitness': best_fitness}
 
     except ValueError as err:
         print(err.args)

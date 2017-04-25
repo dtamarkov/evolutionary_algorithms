@@ -41,7 +41,7 @@ class Logger(object):
             assert (self.logs[key] == None)
             self.values[key] = np.array([])
 
-    def log(self, values):
+    def log(self, values, count_it=True):
         """
         Stores the logged values into the [values] dictionary
         :param values:
@@ -61,11 +61,11 @@ class Logger(object):
                     values[key])
 
         # Print the iteration result
-        if self.iter_log and (self.log_size+1) % self.iter_log == 0:
-            self.print_log(self.log_size)
+        if self.iter_log > 0 and count_it:
+            if self.iter_log and (self.log_size + 1) % self.iter_log == 0:
+                self.print_log(self.log_size)
 
-        self.log_size += 1
-
+        self.log_size += 1 if count_it else 0
 
     def get_log(self, key):
         """
@@ -74,27 +74,20 @@ class Logger(object):
         """
         return self.values[key]
 
-    def print_description(self, problem, dim, pop, iter, xover, mutat):
-        """
-        :param problem:
-        :param dim:
-        :param pop:
-        :param iter:
-        :param xover:
-        :param mutat:
-        :return:
+    def print_description(self, problem, elements_print, offset=30):
         """
 
-        res = "-----------------------------------------"
-        res += "\nProblem to solve:\t" + problem
-        res += "\n-----------------------------------------"
-        res += "\nNumber of problem dimensions:\t" + str(dim)
-        res += "\nSize of the population:\t" + str(pop)
-        res += "\nMax. number of iterations:\t" + str(iter)
-        res += "\nCrossover probability:\t" + str(xover)
-        res += "\nMutation probability:\t" + str(mutat)
-        res += "\n-----------------------------------------\n"
-        print(res)
+        :param problem:
+        :param elements_print:
+        :return:
+        """
+        print "-----------------------------------------"
+        for elem in problem:
+            print ('{:' + str(offset) + '}').format(elem) + '| ' + str(problem[elem])
+        print "-----------------------------------------"
+        for elem in elements_print:
+            print ('{:' + str(offset) + '}').format(elem) + '| ' + str(elements_print[elem])
+        print "-----------------------------------------\n"
 
     def print_log(self, iteration):
         """
@@ -109,7 +102,7 @@ class Logger(object):
                 res += " " + key + " " + str(self.values[key][iteration]) + " ||"
         print(res)
 
-    def plot(self):
+    def plot(self, keys_plot):
         """
         Draws a plot with the logged values
         :param logs:
@@ -121,7 +114,7 @@ class Logger(object):
 
         i = 0
         plotted_keys = np.array([])
-        for key in self.values:
+        for key in keys_plot:
             # Avoid printing values logged as matrix
             if len(self.values[key].shape) == 1:
                 sns.plt.plot(np.arange(0, self.log_size), np.abs(self.values[key]), color=palette[i])
