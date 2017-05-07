@@ -8,10 +8,10 @@ seeds = np.array([82634, 16345, 12397, 84567, 34523, 65831, 40986, 8652, 12345, 
 
 gga = EAL(
     goal = 10**-4,
-    minimization=False,
+    minimization=True,
     n_dimensions=10,
     n_population=200,
-    n_iterations=1000,
+    n_iterations=2000,
     n_children=200,
     xover_prob=0.8,
     mutat_prob=0.05,
@@ -32,7 +32,7 @@ gga = EAL(
 #     res[i] = ga_tools.geometric(3) - ga_tools.geometric(3)
 # print(res)
 gga.fit(ea_type="gga",
-        problem=functions.Ackley,
+        problem=functions.Ackley, bounds=[-10, 10],
         iter_log=100,
         seeds=seeds[0:4])
 

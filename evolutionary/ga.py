@@ -68,8 +68,9 @@ class EAL(object):
         self.goal = goal
         self.n_dimensions = n_dimensions
         self.n_population = n_population
-        if self.n_population%2 != 0:
-            warnings.warn("The size of the population is not a multiple of 2 which may cause problems. Changing it to n_population -= 1")
+        if self.n_population % 2 != 0:
+            warnings.warn(
+                "The size of the population is not a multiple of 2 which may cause problems. Changing it to n_population -= 1")
             n_population -= 1
         self.n_iterations = n_iterations
         self.n_children = n_children
@@ -91,7 +92,7 @@ class EAL(object):
 
         np.set_printoptions(formatter={'float': lambda x: "{0:0.4f}".format(x)}, linewidth=np.nan)
 
-    def fit(self, problem=functions.Ackley,
+    def fit(self, problem=functions.Ackley, bounds=None,
             ea_type="ga", iter_log=-1, seeds=np.array(12345)):
         """
 
@@ -107,9 +108,12 @@ class EAL(object):
         # Initialize variables
         logger = [Logger(iter_log=iter_log) for i in range(len(seeds))]
         best = [None] * len(seeds)
+        iteration = [None] * len(seeds)
 
         # Define the problem to solve and get its fitness function
-        problem = problem(minimize=self.minimization)
+
+        problem = problem(minimize=self.minimization, lower=bounds[0], upper=bounds[1]) if bounds else problem(
+            minimize=self.minimization)
         fitness_function = problem.evaluate
 
         # Set the dimensions of the problem
@@ -133,11 +137,13 @@ class EAL(object):
 
         for i in range(len(seeds)):
             # Perform the evolutionary process
-            logger[i], best[i] = _iterate(self, logger[i], upper, lower, fitness_function, ea_type, seeds[i])
+            logger[i], best[i], iteration[i] = _iterate(self, logger[i], upper, lower, fitness_function, ea_type,
+                                                        seeds[i])
             if len(best[i]) > 0:
                 # Print the results
-                logger[i].print_description({"Seed used:": seeds[i],
-                                             "Iteration": i + 1},
+                logger[i].print_description({"Seed:": seeds[i],
+                                             "Run": i + 1,
+                                             "Iteration:": iteration[i]},
                                             best[i])
                 # Plot the graph with all the results
                 # logger.plot(np.array(['mean', 'worst', 'best']))
@@ -199,7 +205,7 @@ def _iterate(self, logger, upper, lower, fitness_function, ea_type, seed):
         # Iterate simulating the evolutionary process
         while (iteration < self.n_iterations) and (self.goal < best_fitness):
             if iteration == 10:
-                1+1
+                1 + 1
             # Apply the function in each row to get the array of fitness
             fitness = fitness_function(population.chromosomes)
 
@@ -363,10 +369,10 @@ def _iterate(self, logger, upper, lower, fitness_function, ea_type, seed):
             return logger, {'Best chromosome': best_chromosome,
                             'Fitness': best_fitness,
                             'S value': best_s,
-                            'Alpha value': best_alpha}
+                            'Alpha value': best_alpha}, iteration
         else:
             return logger, {'Best chromosome': best_chromosome,
-                            'Fitness': best_fitness}
+                            'Fitness': best_fitness}, iteration
 
     except ValueError as err:
         print(err.args)
