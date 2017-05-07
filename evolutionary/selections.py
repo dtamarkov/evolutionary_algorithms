@@ -38,8 +38,7 @@ def tournament(fitness, N=5, M=2, iterations=1, minimize=True):
         indices = np.append(indices, random_parents[idx])
 
     # Return the indices as an array of integers
-    indices = indices.astype(np.int64)
-    return indices
+    return indices.astype(np.int64)
 
 
 def wheel(fitness, M, replacement=True, minimize=True):

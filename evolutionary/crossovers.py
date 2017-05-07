@@ -42,7 +42,7 @@ def one_point(parents, prob=1):
             # Get the crossover point
             cp = np.random.randint(len(parents[i]))
 
-            # Recombine to generate their children
+            # R   ecombine to generate their children
             parents[i, cp:], parents[i + 1, cp:] = parents[i + 1, cp:], parents[i, cp:].copy()
 
     return parents
@@ -58,8 +58,6 @@ def one_point_gga(parents_s, parents_alpha, prob=1):
     # Check the input var and shuffle the elements
     ga_tools.check(len(parents_s) > 0, "The population S cannot be an empty matrix")
     ga_tools.check(len(parents_s) > 0, "The population Alpha cannot be an empty matrix")
-
-
 
     # Iterate over the parents taking them two by two and store the generated children
     for i in range(0, len(parents_s), 2):

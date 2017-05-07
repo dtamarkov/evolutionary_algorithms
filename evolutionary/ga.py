@@ -68,6 +68,9 @@ class EAL(object):
         self.goal = goal
         self.n_dimensions = n_dimensions
         self.n_population = n_population
+        if self.n_population%2 != 0:
+            warnings.warn("The size of the population is not a multiple of 2 which may cause problems. Changing it to n_population -= 1")
+            n_population -= 1
         self.n_iterations = n_iterations
         self.n_children = n_children
         self.xover_prob = xover_prob
@@ -134,7 +137,7 @@ class EAL(object):
             if len(best[i]) > 0:
                 # Print the results
                 logger[i].print_description({"Seed used:": seeds[i],
-                                             "Iteration": i+1},
+                                             "Iteration": i + 1},
                                             best[i])
                 # Plot the graph with all the results
                 # logger.plot(np.array(['mean', 'worst', 'best']))
@@ -195,14 +198,16 @@ def _iterate(self, logger, upper, lower, fitness_function, ea_type, seed):
 
         # Iterate simulating the evolutionary process
         while (iteration < self.n_iterations) and (self.goal < best_fitness):
-            # if self.minimization else -self.goal > best_fitness):
-
+            if iteration == 10:
+                1+1
             # Apply the function in each row to get the array of fitness
             fitness = fitness_function(population.chromosomes)
 
             ############################################################################################################
             # [LOGS] Log the values
             ############################################################################################################
+
+            # Find best chromosome in the population
             best_idx = np.argmin(fitness) if self.minimization else np.argmax(fitness)
 
             logger.log({'mean': np.abs(np.mean(fitness)),
@@ -214,11 +219,8 @@ def _iterate(self, logger, upper, lower, fitness_function, ea_type, seed):
                             'best_alpha': population.alpha[best_idx]},
                            count_it=False)
 
-            # Get the best chromosome and its features
-            if iteration >= 1:
-                idx_best = np.argmin(logger.get_log('best'))
-            else:
-                idx_best = 0
+            # Get the best chromosome of all the iterations
+            idx_best = np.argmin(logger.get_log('best')) if iteration > 0 else 0
 
             best_chromosome = logger.get_log('best_chromosome')[idx_best] if iteration > 0 else logger.get_log(
                 'best_chromosome')
@@ -234,15 +236,17 @@ def _iterate(self, logger, upper, lower, fitness_function, ea_type, seed):
             if self.selection == 'wheel':
                 idx = selections.wheel(fitness, M=self.n_children, minimize=self.minimization)
             elif self.selection == 'tournament':
-                idx = selections.tournament(fitness, N=self.tournament_competitors,
+                idx = selections.tournament(fitness,
+                                            N=self.tournament_competitors,
                                             M=self.tournament_winners,
                                             iterations=int(self.n_children / self.tournament_winners),
                                             minimize=self.minimization)
             else:
                 raise ValueError("The specified selection doesn't match. Not applying the selection operation")
+
             parents = population.chromosomes[idx]
 
-            # If the Algorithm is a Grid/based genetic algorithm create the s and alpha vars
+            # If the Algorithm is a Grid-based genetic algorithm create the s and alpha vars
             if ea_type == "gga":
                 parents_s = population.s[idx]
                 parents_alpha = population.alpha[idx]
@@ -269,8 +273,6 @@ def _iterate(self, logger, upper, lower, fitness_function, ea_type, seed):
                     if ea_type == "ga":
                         children = crossovers.one_point(np.copy(parents), self.xover_prob)
                     elif ea_type == "gga":
-                        # With probability xover_prob do the crossover. If we have to do the crossover we do it in both
-                        # s and alpha parameters
                         children_s, children_alpha = crossovers.one_point_gga(np.copy(parents_s),
                                                                               np.copy(parents_alpha),
                                                                               self.xover_prob)

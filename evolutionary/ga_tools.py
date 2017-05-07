@@ -5,6 +5,7 @@
 """
 import numpy as np
 
+U = np.random.uniform
 
 def check(assertion, message):
     """
@@ -16,7 +17,7 @@ def check(assertion, message):
     try:
         assert assertion
     except AssertionError as e:
-        e.args += message
+        e.args += str(message)
         raise
 
 
@@ -51,3 +52,12 @@ def n_sort(fitness, n, minimize):
         return fitness.argsort()[:n]
     else:
         return fitness.argsort()[-n:][::-1]
+
+def geometric(dispersion):
+    """
+    :param dispersion: dispersion parameter of the geometric distribution
+    :return: the function creates a geometrical distribution variable from a uniform distribution
+    """
+
+    psi = 1.0 - (dispersion / (1.0 + np.sqrt(1.0 + dispersion ** 2.0)))
+    return np.floor(np.log(1.0 - U(0, 1)) / np.log(1.0 - psi))

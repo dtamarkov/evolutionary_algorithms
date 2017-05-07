@@ -174,14 +174,6 @@ def gga(s, alpha, delta, control_alpha, control_s, prob, prob_alpha, upper_s, lo
     ga_tools.check(len(alpha) > 0, "Alpha cannot be an empty array")
     ga_tools.check(s.shape == alpha.shape, "alpha and S must have the same size")
 
-    def geometric(dispersion):
-        """
-        :param dispersion: dispersion parameter of the geometric distribution
-        :return: the function creates a geometrical distribution variable from a uniform distribution
-        """
-        psi = 1 - (dispersion / (1 + np.sqrt(1 + dispersion ** 2)))
-        return np.floor(np.log(1 - U(0, 1)) / np.log(1 - psi))
-
     to_mutate = U(0, 1, alpha.shape) < prob
     alpha_mutation = U(0, 1, alpha.shape) < prob_alpha
 
@@ -193,7 +185,7 @@ def gga(s, alpha, delta, control_alpha, control_s, prob, prob_alpha, upper_s, lo
                 if alpha_mutation[i, j]:
                     alpha[i, j] += U(-delta[i, j] * control_alpha, delta[i, j] * control_alpha)
                 else:
-                    s[i, j] += geometric(control_s) - geometric(control_s)
+                    s[i, j] += ga_tools.geometric(control_s) - ga_tools.geometric(control_s)
 
     # Check that the alpha values are not lower than 0
     mask = alpha < 0

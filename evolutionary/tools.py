@@ -28,10 +28,8 @@ class Population(object):
         self.chromosomes = chromosomes
         self.sigma = sigma
         self.s = s
-        self.discrete_space = space_s
         self.delta = delta
         self.alpha = alpha
-        self.space_s = space_s
 
     def gga_initialization(self, upper, lower, n_population, grid_intervals):
         """
@@ -45,8 +43,8 @@ class Population(object):
         # Get the delta values with the bounds of the problem
         self.delta = np.array((upper - lower) / grid_intervals)
         # Get the bounds of the discretized space
-        upper_s = np.array(np.floor(upper / self.delta))
-        lower_s = np.array(np.ceil(lower / self.delta))
+        upper_s = np.array(np.floor(upper / self.delta))-1
+        lower_s = np.array(np.floor(lower / self.delta))+1
         # Get the points on the discretized space where the genes are
         self.s = np.array(
             [np.random.randint(lower_s[i, j], upper_s[i, j] + 1) for i in range(len(lower_s)) for j in
@@ -73,3 +71,5 @@ class Population(object):
         ga_tools.check(len(s) == len(delta) and len(delta) == len(alpha),
                        "Delta, Alpha and S must have the same number of elements (equal to the number of dimensions")
         return s * delta + alpha
+
+
