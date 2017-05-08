@@ -90,7 +90,7 @@ class EAL(object):
         self.control_s = control_s
         self.grid_intervals = grid_intervals
 
-        np.set_printoptions(formatter={'float': lambda x: "{0:0.4f}".format(x)}, linewidth=np.nan)
+        np.set_printoptions(formatter={'float': lambda x: "{0:0.8f}".format(x)}, linewidth=np.nan)
 
     def fit(self, problem=functions.Ackley, bounds=None,
             ea_type="ga", iter_log=-1, seeds=np.array(12345)):
@@ -147,6 +147,10 @@ class EAL(object):
                                             best[i])
                 # Plot the graph with all the results
                 # logger.plot(np.array(['mean', 'worst', 'best']))
+        succes = len([d['Fitness'] for d in best if d['Fitness'] < self.goal]) / len(best) * 100
+        Logger(-1).print_description({"Average iterations": np.mean(iteration),
+                                      "Std iterations": np.std(iteration),
+                                      "% Succes": succes})
 
 
 def _iterate(self, logger, upper, lower, fitness_function, ea_type, seed):
@@ -204,8 +208,7 @@ def _iterate(self, logger, upper, lower, fitness_function, ea_type, seed):
 
         # Iterate simulating the evolutionary process
         while (iteration < self.n_iterations) and (self.goal < best_fitness):
-            if iteration == 10:
-                1 + 1
+
             # Apply the function in each row to get the array of fitness
             fitness = fitness_function(population.chromosomes)
 
@@ -213,7 +216,7 @@ def _iterate(self, logger, upper, lower, fitness_function, ea_type, seed):
             # [LOGS] Log the values
             ############################################################################################################
 
-            # Find best chromosome in the population
+            # Get the best chromosome in the population
             best_idx = np.argmin(fitness) if self.minimization else np.argmax(fitness)
 
             logger.log({'mean': np.abs(np.mean(fitness)),
@@ -252,7 +255,7 @@ def _iterate(self, logger, upper, lower, fitness_function, ea_type, seed):
 
             parents = population.chromosomes[idx]
 
-            # If the Algorithm is a Grid-based genetic algorithm create the s and alpha vars
+            # If the Algorithm is a Grid-based genetic algorithm create the s and alpha
             if ea_type == "gga":
                 parents_s = population.s[idx]
                 parents_alpha = population.alpha[idx]

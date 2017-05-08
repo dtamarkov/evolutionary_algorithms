@@ -74,20 +74,21 @@ class Logger(object):
         """
         return self.values[key]
 
-    def print_description(self, problem, elements_print, offset=30):
+    def print_description(self, problem, elements_print=None, offset=30):
         """
 
         :param problem:
         :param elements_print:
         :return:
         """
-        print "-----------------------------------------"
+        print ("-----------------------------------------")
         for elem in problem:
             print ('{:' + str(offset) + '}').format(elem) + '| ' + str(problem[elem])
-        print "-----------------------------------------"
-        for elem in elements_print:
-            print ('{:' + str(offset) + '}').format(elem) + '| ' + str(elements_print[elem])
-        print "-----------------------------------------\n"
+        print ("-----------------------------------------")
+        if elements_print:
+            for elem in elements_print:
+                print ('{:' + str(offset) + '}').format(elem) + '| ' + str(elements_print[elem])
+            print ("-----------------------------------------\n")
 
     def print_log(self, iteration):
         """

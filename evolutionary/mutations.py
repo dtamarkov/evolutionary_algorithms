@@ -179,30 +179,37 @@ def gga(s, alpha, delta, control_alpha, control_s, prob, prob_alpha, upper_s, lo
 
     for i in range(len(s)):
         for j in range(len(s[i])):
+
             # Check if the gene has to be mutated
             if to_mutate[i, j]:
+
                 # Check which kind of mutation to apply
                 if alpha_mutation[i, j]:
                     alpha[i, j] += U(-delta[i, j] * control_alpha, delta[i, j] * control_alpha)
+                    if alpha[i, j] < 0:
+                        alpha[i, j] += delta[i, j]
+                        s[i, j] -= 1
+                    elif alpha[i, j] > delta[i, j]:
+                        alpha[i, j] -= delta[i, j]
+                        s[i, j] += 1
+                        # # Check that the alpha values are not lower than 0
+                        # mask = alpha < 0
+                        # alpha[mask] += delta[mask]
+                        # s[mask] -= 1
+                        #
+                        # # Check that the alpha values are not bigger than its corresponding delta
+                        # mask = alpha >= delta
+                        # alpha[mask] -= delta[mask]
+                        # s[mask] += 1
                 else:
                     s[i, j] += ga_tools.geometric(control_s) - ga_tools.geometric(control_s)
 
-    # Check that the alpha values are not lower than 0
-    mask = alpha < 0
-    alpha[mask] += delta[mask]
-    s[mask] -= 1
+                # Check that s is inside the upper bounds of the discretized space
+                mask = s > upper_s
+                s[mask] = upper_s[mask]
 
-    # Check that the alpha values are not bigger than its corresponding delta
-    mask = alpha > delta
-    alpha[mask] -= delta[mask]
-    s[mask] += 1
-
-    # Check that s is inside the upper bounds of the discretized space
-    mask = s > upper_s
-    s[mask] = upper_s[mask]
-
-    # Check that s is inside the lower bounds of the discretized space
-    mask = s < lower_s
-    s[mask] = lower_s[mask]
+                # Check that s is inside the lower bounds of the discretized space
+                mask = s < lower_s
+                s[mask] = lower_s[mask]
 
     return s, alpha

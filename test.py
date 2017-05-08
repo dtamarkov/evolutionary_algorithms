@@ -1,6 +1,7 @@
 from __future__ import division
 
 import numpy as np
+import matplotlib.pyplot as plt
 
 from evolutionary import EAL, optim_functions as functions
 from evolutionary import ga_tools as ga_tools
@@ -27,12 +28,14 @@ gga = EAL(
     tournament_winners=1
 )
 
-# res = [None]*10
+# res = [None]*10000
 # for i in range(len(res)):
-#     res[i] = ga_tools.geometric(3) - ga_tools.geometric(3)
-# print(res)
+#     res[i] = ga_tools.geometric(1)
+# # print(res)
+# plt.hist(res)
+# plt.show()
 gga.fit(ea_type="gga",
         problem=functions.Ackley, bounds=[-10, 10],
         iter_log=100,
-        seeds=seeds[0:4])
+        seeds=seeds[0:1])
 
