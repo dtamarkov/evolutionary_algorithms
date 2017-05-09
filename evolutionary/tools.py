@@ -42,16 +42,21 @@ class Population(object):
 
         # Get the delta values with the bounds of the problem
         self.delta = np.array((upper - lower) / grid_intervals)
+
         # Get the bounds of the discretized space
-        upper_s = np.array(np.floor(upper / self.delta))-1
-        lower_s = np.array(np.floor(lower / self.delta))+1
+        upper_s = np.array(np.floor(upper / self.delta)) - 1
+        lower_s = np.array(np.floor(lower / self.delta)) + 1
+
         # Get the points on the discretized space where the genes are
         self.s = np.array(
             [np.random.randint(lower_s[i, j], upper_s[i, j] + 1) for i in range(len(lower_s)) for j in
              range(len(lower_s[i]))]).reshape(self.delta.shape)
+
         # Randomly sample an alpha value
         self.alpha = np.array(
             [np.random.uniform(0, delta) for delta_array in self.delta for delta in delta_array]).reshape(self.s.shape)
+
+        # Create the chromosome
         self.chromosomes = self.gga_chromosome()
 
         return upper_s.astype(int), lower_s.astype(int)
@@ -71,5 +76,3 @@ class Population(object):
         ga_tools.check(len(s) == len(delta) and len(delta) == len(alpha),
                        "Delta, Alpha and S must have the same number of elements (equal to the number of dimensions")
         return s * delta + alpha
-
-
