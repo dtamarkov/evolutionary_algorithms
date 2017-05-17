@@ -41,7 +41,7 @@ class Schwefel(Function):
         sum = np.sum(population * np.sin(np.sqrt(np.abs(population))))
 
         # Return the value of the function
-        res = 418.982988 * len(population) - sum
+        res = 418.982887272433799807913601398 * len(population) - sum
         return res if self.minimize else -res
 
     def plot(self, d3=True, samples=1000):

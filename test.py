@@ -8,11 +8,11 @@ from evolutionary import ga_tools as ga_tools
 seeds = np.array([82634, 16345, 12397, 84567, 34523, 65831, 40986, 8652, 12345, 98765, 19285, 97531])
 
 gga = EAL(
-    goal = 10**-4,
+    goal = 10**-10,
     minimization=False,
     n_dimensions=10,
     n_population=200,
-    n_iterations=200,
+    n_iterations=2000,
     n_children=200,
     xover_prob=0.8,
     mutat_prob=0.05,
@@ -23,7 +23,7 @@ gga = EAL(
     grid_intervals=20,
     alpha_prob=0.9,
     control_alpha=10**-2,
-    control_s=6,
+    control_s=3,
     tournament_competitors=3,
     tournament_winners=1
 )
@@ -34,8 +34,13 @@ gga = EAL(
 # # print(res)
 # plt.hist(res)
 # plt.show()
+
+# s = functions.Schwefel()
+# print (s.evaluate(np.ones(10)*420.968746))
+
 gga.fit(ea_type="gga",
-        problem=functions.Ackley, bounds=[-10, 10],
-        iter_log=1,
-        seeds=seeds[0:1])
+        problem=functions.Rastrigin, bounds=[-10, 10],
+        iter_log=50,
+        seeds=seeds[0:4])
+
 

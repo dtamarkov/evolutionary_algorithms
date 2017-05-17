@@ -49,7 +49,7 @@ class Ackley(Function):
         # Compute the sums on the population
         for i in population:
             firstSum += i**2.0
-            secondSum += np.cos(2.0*self.c*i)
+            secondSum += np.cos(self.c*i)
 
         # Return the function
         if self.minimize:
