@@ -17,7 +17,7 @@ class Griewank(Function):
     (Source: https://www.sfu.ca/~ssurjano/griewank.html)
     """
 
-    def __init__(self, lower=-600., upper=600., minimize=True):
+    def __init__(self, lower=-600., upper=600., pi_function=False, m_function=False, minimize=True):
         """
         Initialize the function. 
         Call to its parent class and store the name of the optimization function.

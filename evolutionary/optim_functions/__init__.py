@@ -12,7 +12,9 @@ from .zakharov import Zakharov
 from .easom import Easom
 from .schwefel import Schwefel
 from .rastrigin import Rastrigin
+from .sphere import Sphere
+
 
 # Make possible the sintax:
 # from optim_functions import *
-__all__ = ["Ackley", "Griewank", "Beale", "Booth", "Rothyp", "Forrester", "Matyas", "Powell", "Zakharov", "Easom", "Schwefel", "Rastrigin"]
+__all__ = ["Ackley", "Griewank", "Beale", "Booth", "Rothyp", "Forrester", "Matyas", "Powell", "Zakharov", "Easom", "Schwefel", "Rastrigin", "Sphere"]

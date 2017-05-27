@@ -18,7 +18,7 @@ class Easom(Function):
     (Source: https://www.sfu.ca/~ssurjano/ackley.html)
     """
 
-    def __init__(self, lower=-100., upper=100., minimize=True):
+    def __init__(self, lower=-100., upper=100., pi_function=False, m_function=False, minimize=True):
         """
         Initialize the Easom class
         """

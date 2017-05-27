@@ -14,6 +14,8 @@ import evolutionary.selections as selections
 import evolutionary.optim_functions as functions
 from evolutionary import Logger
 from evolutionary import Population
+import seaborn as sns
+import time
 
 
 class EAL(object):
@@ -92,7 +94,7 @@ class EAL(object):
 
         np.set_printoptions(formatter={'float': lambda x: "{0:0.8f}".format(x)}, linewidth=np.nan)
 
-    def fit(self, problem=functions.Ackley, bounds=None,
+    def fit(self, problem=functions.Ackley, pi_function=False, m_function=False, bounds=None,
             ea_type="ga", iter_log=-1, seeds=np.array(12345)):
         """
 
@@ -111,9 +113,10 @@ class EAL(object):
         iteration = [None] * len(seeds)
 
         # Define the problem to solve and get its fitness function
+        problem = problem(minimize=self.minimization, lower=bounds[0], upper=bounds[1], pi_function=pi_function,
+                          m_function=m_function) if bounds \
+            else problem(minimize=self.minimization, pi_function=pi_function, m_function=m_function)
 
-        problem = problem(minimize=self.minimization, lower=bounds[0], upper=bounds[1]) if bounds else problem(
-            minimize=self.minimization)
         fitness_function = problem.evaluate
 
         # Set the dimensions of the problem
@@ -126,6 +129,13 @@ class EAL(object):
         upper = np.ones((self.n_population, self.n_dimensions)) * problem.upper
         lower = np.ones((self.n_population, self.n_dimensions)) * problem.lower  # Print the best value we have obtained
 
+        # Update bounds in case for a non-isotropic problem
+        if m_function:
+            for j in range(self.n_population):
+                for i in range(self.n_dimensions):
+                    upper[j, i] *= 2 ** i
+                    lower[j, i] *= 2 ** i
+
         # Print a description of the problem
         Logger(-1).print_description({"Problem to solve:": problem.name},
                                      {"Strategy followed:": ea_type,
@@ -135,22 +145,42 @@ class EAL(object):
                                       "Crossover probability": self.xover_prob,
                                       "Mutation probability": self.mutat_prob})
 
+        fitness_mean = np.array([])
+        fitness_std = np.array([])
+        fitness_worst = np.array([])
+        timeit = np.zeros(len(seeds))
         for i in range(len(seeds)):
             # Perform the evolutionary process
+            start = time.time()
             logger[i], best[i], iteration[i] = _iterate(self, logger[i], upper, lower, fitness_function, ea_type,
                                                         seeds[i])
+            timeit[i] = time.time() - start
+
+            fitness_mean = np.append(fitness_mean, logger[i].get_log('mean')[-1])
+            fitness_worst = np.append(fitness_worst, logger[i].get_log('worst')[-1])
+            fitness_std = np.append(fitness_std, logger[i].get_log('std')[-1])
+
             if len(best[i]) > 0:
                 # Print the results
+                best[i]["Fitness mean:"] = fitness_mean[i]
+                best[i]["Fitness std:"] = fitness_std[i]
                 logger[i].print_description({"Seed:": seeds[i],
                                              "Run": i + 1,
-                                             "Iteration:": iteration[i]},
+                                             "Iteration:": iteration[i],
+                                             "Running time(s):": timeit[i]},
                                             best[i])
                 # Plot the graph with all the results
                 # logger.plot(np.array(['mean', 'worst', 'best']))
+        print(len([d['Fitness'] for d in best if d['Fitness'] < self.goal]))
         succes = len([d['Fitness'] for d in best if d['Fitness'] < self.goal]) / len(best) * 100
         Logger(-1).print_description({"Average iterations": np.mean(iteration),
                                       "Std iterations": np.std(iteration),
-                                      "% Succes": succes})
+                                      "% Succes": succes,
+                                      "Average run time:": np.mean(timeit),
+                                      "Std run time:": np.std(timeit)})
+        sns.plt.plot(fitness_mean, 'ro-')
+        sns.plt.plot(fitness_std, 'bo-')
+        sns.plt.show()
 
 
 def _iterate(self, logger, upper, lower, fitness_function, ea_type, seed):
@@ -220,6 +250,7 @@ def _iterate(self, logger, upper, lower, fitness_function, ea_type, seed):
             best_idx = np.argmin(fitness) if self.minimization else np.argmax(fitness)
 
             logger.log({'mean': np.abs(np.mean(fitness)),
+                        'std': np.std(fitness),
                         'worst': np.abs(np.max(fitness)) if self.minimization else np.abs(np.min(fitness)),
                         'best': np.abs(np.min(fitness)) if self.minimization else  np.abs(np.max(fitness)),
                         'best_chromosome': population.chromosomes[best_idx]})

@@ -17,7 +17,7 @@ class Beale(Function):
     (Source: https://www.sfu.ca/~ssurjano/beale.html)
     """
 
-    def __init__(self, lower=-4.5, upper=4.5, minimize=True):
+    def __init__(self, lower=-4.5, upper=4.5, pi_function=False, m_function=False, minimize=True):
         """
         Initialize the function. 
         Call to its parent class and store the name of the optimization function.

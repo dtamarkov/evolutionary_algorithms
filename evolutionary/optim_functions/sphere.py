@@ -1,7 +1,7 @@
 """
     @Author: Manuel Lagunas
     @Personal_page: http://giga.cps.unizar.es/~mlagunas/
-    @date: Feb - 2017
+    @date: April - 2017
 """
 
 import numpy as np
@@ -9,25 +9,31 @@ import numpy as np
 from .functions import Function
 
 
-class Zakharov(Function):
+class Sphere(Function):
     """
-    The Beale function is multimodal, with sharp peaks at the corners of the input domain.
-    2 Dimensional
-    Global minima x = (3, 0.5)
-    (Source: https://www.sfu.ca/~ssurjano/beale.html)
+
     """
 
     def __init__(self, lower=-10., upper=10., pi_function=False, m_function=False, minimize=True):
         """
-        Initialize the function. 
+        Initialize the function.
         Call to its parent class and store the name of the optimization function.
         """
         self.lower = lower
         self.upper = upper
         self.minimize = minimize
         self.dim = None
-        self.name = "Zakharov"
-        super(self.__class__, self).__init__("Zakharov")
+        self.name = "Sphere"
+        self.pi_function = pi_function
+        self.m_function = m_function
+        if self.pi_function:
+            super(self.__class__, self).__init__("PI-M-Sphere")
+        elif self.pi_function:
+            super(self.__class__, self).__init__("M-Sphere")
+        elif self.pi_function:
+            super(self.__class__, self).__init__("PI-Sphere")
+        else:
+            super(self.__class__, self).__init__("Sphere")
 
     def evaluate(self, population):
         """
@@ -41,24 +47,25 @@ class Zakharov(Function):
         if len(population.shape) == 2:
             return np.apply_along_axis(self.evaluate, 1, population)
 
-        # Initialize vars
-        sum1, sum2 = 0.0, 0.0
+        aux_population = population.copy()
+
+        aux_population = aux_population - np.ones(len(aux_population)) * np.pi if self.pi_function else aux_population
+
+        if self.m_function:
+            aux_population = super(self.__class__, self).get_m_population(aux_population)
 
         # Calculate the sums over the population
-        for i in range(len(population)):
-            sum1 += population[i] ** 2
-            sum2 += 0.5 * (i + 1) * population[i]
+        sum_1 = np.sum(aux_population ** 2)
 
-        # Return the value of the function
-        return sum1 + sum2 ** 2 + sum2 ** 4 if self.minimize else -(sum1 + sum2 ** 2 + sum2 ** 4)
+        return sum_1 if self.minimize else -sum_1
 
-    def plot(self, d3=True, lower=-10, upper=10, samples=1000):
+    def plot(self, d3=True, samples=1000):
         """
         Makes a 2d plot using the parent class.
         It creates an array of samples between the upper and lower bounds
         and compute its fitness which will be plotted together.
         """
         if d3:
-            super(self.__class__, self).plot3d(lower, upper, samples)
+            super(self.__class__, self).plot3d(self.lower, self.upper, samples)
         else:
-            print(self.name + " function is 2 dimensional, therefore, it cannot be displayed in a 2d plot")
+            super(self.__class__, self).plot(self.lower, self.upper, samples)

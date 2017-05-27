@@ -88,3 +88,8 @@ class Function(object):
         ax.invert_xaxis()
         # Make the 3d plot look like in www.sfu.ca/~ssurjano/
         ax.view_init(30, 25)
+
+    def get_m_population(self, population):
+            for i in range(len(population)):
+                population[i] *= 2**(-(i+1)+1)
+            return population

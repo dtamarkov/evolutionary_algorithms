@@ -16,7 +16,7 @@ class Forrester(Function):
     (Source: https://www.sfu.ca/~ssurjano/forretal08.html)
     """
 
-    def __init__(self, lower=-0., upper=1., minimize=True):
+    def __init__(self, lower=-0., upper=1., pi_function=False, m_function=False, minimize=True):
         """
         """
         self.lower = lower

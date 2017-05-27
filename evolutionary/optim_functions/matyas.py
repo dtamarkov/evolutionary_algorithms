@@ -17,7 +17,7 @@ class Matyas(Function):
     (Source: https://www.sfu.ca/~ssurjano/matya.html)
     """
 
-    def __init__(self, lower=-10., upper=10., minimize=True):
+    def __init__(self, lower=-10., upper=10., pi_function=False, m_function=False, minimize=True):
         """
         Initialize the function. 
         Call to its parent class and store the name of the optimization function.

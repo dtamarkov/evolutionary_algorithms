@@ -13,7 +13,7 @@ class Schwefel(Function):
 
     """
 
-    def __init__(self, lower=-500., upper=500., minimize=True):
+    def __init__(self, lower=-500., upper=500., minimize=True, pi_function=False, m_function=False):
         """
         Initialize the function.
         Call to its parent class and store the name of the optimization function.
@@ -23,7 +23,11 @@ class Schwefel(Function):
         self.minimize = minimize
         self.dim = None
         self.name = "Schwefel"
-        super(self.__class__, self).__init__(self.name)
+        self.m_function = m_function
+        if self.m_function:
+            super(self.__class__, self).__init__("M-Schwefel")
+        else:
+            super(self.__class__, self).__init__("Schwefel")
 
     def evaluate(self, population):
         """
@@ -37,11 +41,17 @@ class Schwefel(Function):
         if len(population.shape) == 2:
             return np.apply_along_axis(self.evaluate, 1, population)
 
+        aux_population = population.copy()
+
+        if self.m_function:
+            aux_population = super(self.__class__, self).get_m_population(aux_population)
+
+
         # Calculate the sums over the population
-        sum = np.sum(population * np.sin(np.sqrt(np.abs(population))))
+        sum = np.sum(aux_population * np.sin(np.sqrt(np.abs(aux_population))))
 
         # Return the value of the function
-        res = 418.982887272433799807913601398 * len(population) - sum
+        res = 418.982887272433799807913601398 * len(aux_population) - sum
         return res if self.minimize else -res
 
     def plot(self, d3=True, samples=1000):

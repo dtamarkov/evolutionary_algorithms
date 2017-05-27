@@ -1,14 +1,13 @@
 from __future__ import division
-
 import numpy as np
-import matplotlib.pyplot as plt
 
 from evolutionary import EAL, optim_functions as functions
-from evolutionary import ga_tools as ga_tools
-seeds = np.array([82634, 16345, 12397, 84567, 34523, 65831, 40986, 8652, 12345, 98765, 19285, 97531])
+
+seeds = np.array([82634, 16345, 12397, 84567, 34523, 65831, 40986, 8652, 12345, 98765, 19285, 97531,
+                  52345, 12342, 8524, 13855, 10574, 10526, 342, 88529, 12385, 90874, 79432, 12953, 56372])
 
 gga = EAL(
-    goal = 10**-10,
+    goal = 10**-4,
     minimization=False,
     n_dimensions=10,
     n_population=200,
@@ -28,19 +27,9 @@ gga = EAL(
     tournament_winners=1
 )
 
-# res = [None]*10000
-# for i in range(len(res)):
-#     res[i] = ga_tools.geometric(1)
-# # print(res)
-# plt.hist(res)
-# plt.show()
-
-# s = functions.Schwefel()
-# print (s.evaluate(np.ones(10)*420.968746))
-
 gga.fit(ea_type="gga",
-        problem=functions.Rastrigin, bounds=[-10, 10],
-        iter_log=50,
-        seeds=seeds[0:4])
+        problem=functions.Rastrigin, bounds=[-10, 10], pi_function=True, m_function=True,
+        iter_log=-1,
+        seeds=seeds[0:25])
 
 

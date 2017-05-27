@@ -16,7 +16,7 @@ class Booth(Function):
     (Source: https://www.sfu.ca/~ssurjano/griewank.html)
     """
 
-    def __init__(self, lower=-10., upper=10., minimize=True):
+    def __init__(self, lower=-10., upper=10., pi_function=False, m_function=False, minimize=True):
         self.lower = lower
         self.upper = upper
         self.minimize = minimize

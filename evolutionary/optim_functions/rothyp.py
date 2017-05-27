@@ -19,7 +19,7 @@ class Rothyp(Function):
     (Source: https://www.sfu.ca/~ssurjano/rothyp.html)
     """
 
-    def __init__(self, lower=-65.536, upper=65.536, minimize=True):
+    def __init__(self, lower=-65.536, upper=65.536, pi_function=False, m_function=False, minimize=True):
         self.lower = lower
         self.upper = upper
         self.minimize = minimize

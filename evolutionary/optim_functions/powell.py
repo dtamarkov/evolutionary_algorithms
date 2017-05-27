@@ -15,7 +15,7 @@ class Powell(Function):
     (Source: https://www.sfu.ca/~ssurjano/powell.html)
     """
 
-    def __init__(self, lower=-4., upper=5., minimize=True):
+    def __init__(self, lower=-4., upper=5., pi_function=False, m_function=False, minimize=True):
         """
         Initialize the class
         Store the name of the class calling the parent class Function
