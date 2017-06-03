@@ -120,7 +120,7 @@ class EAL(object):
 
         fitness_function = problem.evaluate
         if to_file:
-            sys.stdout = open('results/' + problem.name + 'ERROR.txt', 'w')
+            sys.stdout = open('results/' + problem.name + '.txt', 'w')
 
         # Set the dimensions of the problem
         if problem.dim and self.n_dimensions > problem.dim:
@@ -188,7 +188,7 @@ class EAL(object):
         sns.plt.title(problem.name)
         sns.plt.xlabel("Runs")
         sns.plt.legend(np.array(["Fitness_mean", "Fitness_std"]), loc='upper right')
-        sns.plt.savefig('results/' + problem.name + '.png')
+        sns.plt.savefig('results/' + problem.name + '.pdf')
         sns.plt.clf()
 
 

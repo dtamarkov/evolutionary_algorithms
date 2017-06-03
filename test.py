@@ -30,70 +30,83 @@ gga = EAL(
 # gga.fit(ea_type="gga",
 #         problem=functions.Rastrigin, bounds=[-10, 10], pi_function=False, m_function=False,
 #         iter_log=-1,
-#         seeds=seeds)
+#         seeds=seeds,
+#         to_file=True)
 #
 # gga.fit(ea_type="gga",
 #         problem=functions.Rastrigin, bounds=[-10, 10], pi_function=True, m_function=False,
 #         iter_log=-1,
-#         seeds=seeds)
+#         seeds=seeds,
+#         to_file=True)
 #
 # gga.fit(ea_type="gga",
 #         problem=functions.Rastrigin, bounds=[-10, 10], pi_function=False, m_function=True,
 #         iter_log=-1,
-#         seeds=seeds)
+#         seeds=seeds,
+#         to_file=True)
 #
 # gga.fit(ea_type="gga",
 #         problem=functions.Rastrigin, bounds=[-10, 10], pi_function=True, m_function=True,
 #         iter_log=-1,
-#         seeds=seeds)
+#         seeds=seeds,
+#         to_file=True)
 #
 # gga.fit(ea_type="gga",
 #         problem=functions.Ackley, bounds=[-10, 10], pi_function=False, m_function=False,
 #         iter_log=-1,
-#         seeds=seeds)
+#         seeds=seeds,
+#         to_file=True)
 #
 # gga.fit(ea_type="gga",
 #         problem=functions.Ackley, bounds=[-10, 10], pi_function=True, m_function=False,
 #         iter_log=-1,
-#         seeds=seeds)
+#         seeds=seeds,
+#         to_file=True)
 #
 # gga.fit(ea_type="gga",
 #         problem=functions.Ackley, bounds=[-10, 10], pi_function=False, m_function=True,
 #         iter_log=-1,
-#         seeds=seeds)
-
+#         seeds=seeds,
+#         to_file=True)
+#
 # gga.fit(ea_type="gga",
 #         problem=functions.Ackley, bounds=[-10, 10], pi_function=True, m_function=True,
 #         iter_log=-1,
-#         seeds=seeds)
-
+#         seeds=seeds,
+#         to_file=True)
+#
 # gga.fit(ea_type="gga",
 #         problem=functions.Sphere, bounds=[-10, 10], pi_function=False, m_function=False,
 #         iter_log=-1,
-#         seeds=seeds)
+#         seeds=seeds,
+#         to_file=True)
 #
 # gga.fit(ea_type="gga",
 #         problem=functions.Sphere, bounds=[-10, 10], pi_function=True, m_function=False,
 #         iter_log=-1,
-#         seeds=seeds)
+#         seeds=seeds,
+#         to_file=True)
 #
 # gga.fit(ea_type="gga",
 #         problem=functions.Sphere, bounds=[-10, 10], pi_function=False, m_function=True,
 #         iter_log=-1,
-#         seeds=seeds)
-
+#         seeds=seeds,
+#         to_file=True)
+#
 # gga.fit(ea_type="gga",
 #         problem=functions.Sphere, bounds=[-10, 10], pi_function=True, m_function=True,
 #         iter_log=-1,
-#         seeds=seeds)
+#         seeds=seeds,
+#         to_file=True)
 
 gga.fit(ea_type="gga",
         problem=functions.Schwefel, bounds=[-500, 500], pi_function=False, m_function=False,
-        iter_log=50,
-        seeds=seeds[20],
+        iter_log=-1,
+        seeds=seeds,
         to_file=True)
 
 # gga.fit(ea_type="gga",
 #         problem=functions.Schwefel, bounds=[-500, 500], pi_function=False, m_function=True,
 #         iter_log=-1,
-#         seeds=seeds)
+#         seeds=seeds,
+#         to_file=True)

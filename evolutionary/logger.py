@@ -127,7 +127,7 @@ class Logger(object):
         sns.plt.xlabel("Iterations")
         sns.plt.ylabel("Fitness")
         sns.plt.title("RUN "+problem)
-        sns.plt.savefig('results/RUN' + problem + '.png')
+        sns.plt.savefig('results/RUN' + problem + '.pdf')
         if show:
             sns.plt.show()
         sns.plt.clf()
