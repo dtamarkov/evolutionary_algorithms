@@ -25,9 +25,9 @@ class Schwefel(Function):
         self.name = "Schwefel"
         self.m_function = m_function
         if self.m_function:
-            super(self.__class__, self).__init__("M-Schwefel")
+            super(self.__class__, self).__init__("m-schwefel")
         else:
-            super(self.__class__, self).__init__("Schwefel")
+            super(self.__class__, self).__init__("schwefel")
 
     def evaluate(self, population):
         """

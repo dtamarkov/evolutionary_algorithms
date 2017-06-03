@@ -16,6 +16,7 @@ from evolutionary import Logger
 from evolutionary import Population
 import seaborn as sns
 import time
+import sys
 
 
 class EAL(object):
@@ -95,7 +96,7 @@ class EAL(object):
         np.set_printoptions(formatter={'float': lambda x: "{0:0.8f}".format(x)}, linewidth=np.nan)
 
     def fit(self, problem=functions.Ackley, pi_function=False, m_function=False, bounds=None,
-            ea_type="ga", iter_log=-1, seeds=np.array(12345)):
+            ea_type="ga", iter_log=-1, seeds=np.array(12345), to_file=False):
         """
 
         :param ea_type:
@@ -118,6 +119,8 @@ class EAL(object):
             else problem(minimize=self.minimization, pi_function=pi_function, m_function=m_function)
 
         fitness_function = problem.evaluate
+        if to_file:
+            sys.stdout = open('results/' + problem.name + 'ERROR.txt', 'w')
 
         # Set the dimensions of the problem
         if problem.dim and self.n_dimensions > problem.dim:
@@ -127,9 +130,9 @@ class EAL(object):
 
         # Define the bounds to explore the problem
         upper = np.ones((self.n_population, self.n_dimensions)) * problem.upper
-        lower = np.ones((self.n_population, self.n_dimensions)) * problem.lower  # Print the best value we have obtained
+        lower = np.ones((self.n_population, self.n_dimensions)) * problem.lower
 
-        # Update bounds in case for a non-isotropic problem
+        # Update bounds in case of a non-isotropic problem
         if m_function:
             for j in range(self.n_population):
                 for i in range(self.n_dimensions):
@@ -149,7 +152,9 @@ class EAL(object):
         fitness_std = np.array([])
         fitness_worst = np.array([])
         timeit = np.zeros(len(seeds))
+
         for i in range(len(seeds)):
+
             # Perform the evolutionary process
             start = time.time()
             logger[i], best[i], iteration[i] = _iterate(self, logger[i], upper, lower, fitness_function, ea_type,
@@ -169,10 +174,10 @@ class EAL(object):
                                              "Iteration:": iteration[i],
                                              "Running time(s):": timeit[i]},
                                             best[i])
-                # Plot the graph with all the results
-                # logger.plot(np.array(['mean', 'worst', 'best']))
-        print(len([d['Fitness'] for d in best if d['Fitness'] < self.goal]))
-        succes = len([d['Fitness'] for d in best if d['Fitness'] < self.goal]) / len(best) * 100
+        # Plot the graph with all the results
+        logger[0].plot(np.array(['mean', 'worst', 'best']), problem.name, False)
+
+        succes = len([d['Fitness'] for d in best if d['Fitness'] < self.goal]) / len(seeds) * 100
         Logger(-1).print_description({"Average iterations": np.mean(iteration),
                                       "Std iterations": np.std(iteration),
                                       "% Succes": succes,
@@ -180,7 +185,11 @@ class EAL(object):
                                       "Std run time:": np.std(timeit)})
         sns.plt.plot(fitness_mean, 'ro-')
         sns.plt.plot(fitness_std, 'bo-')
-        sns.plt.show()
+        sns.plt.title(problem.name)
+        sns.plt.xlabel("Runs")
+        sns.plt.legend(np.array(["Fitness_mean", "Fitness_std"]), loc='upper right')
+        sns.plt.savefig('results/' + problem.name + '.png')
+        sns.plt.clf()
 
 
 def _iterate(self, logger, upper, lower, fitness_function, ea_type, seed):
@@ -387,11 +396,13 @@ def _iterate(self, logger, upper, lower, fitness_function, ea_type, seed):
                                                               minimize=self.minimization)
             elif self.replacement == 'worst_parents':
                 population.chromosomes = replacements.worst_parents(parents, fitness, children, self.minimization)
+
             elif self.replacement == 'generational':
                 population.chromosomes = children
                 if ea_type == "gga":
                     population.s = children_s
                     population.alpha = children_alpha
+
             else:
                 raise ValueError("The specified replacement doesn't match. Not applying the replacement operation")
 

@@ -103,7 +103,7 @@ class Logger(object):
                 res += " " + key + " " + str(self.values[key][iteration]) + " ||"
         print(res)
 
-    def plot(self, keys_plot):
+    def plot(self, keys_plot, problem, show=True):
         """
         Draws a plot with the logged values
         :param logs:
@@ -124,4 +124,10 @@ class Logger(object):
 
         # Create the legend
         sns.plt.legend(plotted_keys, loc='upper right')
-        sns.plt.show()
+        sns.plt.xlabel("Iterations")
+        sns.plt.ylabel("Fitness")
+        sns.plt.title("RUN "+problem)
+        sns.plt.savefig('results/RUN' + problem + '.png')
+        if show:
+            sns.plt.show()
+        sns.plt.clf()

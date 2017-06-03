@@ -34,13 +34,13 @@ class Ackley(Function):
         self.pi_function = pi_function
         self.m_function = m_function
         if self.pi_function and self.m_function:
-            super(self.__class__, self).__init__("PI-M-Ackley")
+            super(self.__class__, self).__init__("pi-m-ackley")
         elif self.pi_function:
-            super(self.__class__, self).__init__("PI-Ackley")
+            super(self.__class__, self).__init__("pi-ackley")
         elif self.m_function:
-            super(self.__class__, self).__init__("M-Ackley")
+            super(self.__class__, self).__init__("m-ackley")
         else:
-            super(self.__class__, self).__init__("Ackley")
+            super(self.__class__, self).__init__("ackley")
 
     def evaluate(self, population):
         """
@@ -55,10 +55,10 @@ class Ackley(Function):
 
         aux_population = population.copy()
 
-        aux_population = aux_population - np.ones(len(aux_population)) * np.pi if self.pi_function else aux_population
-
         if self.m_function:
             aux_population = super(self.__class__, self).get_m_population(aux_population)
+
+        aux_population = aux_population - np.ones(len(aux_population)) * np.pi if self.pi_function else aux_population
 
         # Initialize vars
         firstSum = 0.0

@@ -90,6 +90,6 @@ class Function(object):
         ax.view_init(30, 25)
 
     def get_m_population(self, population):
-            for i in range(len(population)):
-                population[i] *= 2**(-(i+1)+1)
-            return population
+        for i in range(len(population)):
+            population[i] = population[i] * 2 ** (-(i + 1) + 1)
+        return population
