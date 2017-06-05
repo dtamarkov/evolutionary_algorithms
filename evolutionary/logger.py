@@ -96,11 +96,10 @@ class Logger(object):
                 values. Useful to keep track of the process
         :param iteration:
         """
-        res = "iteration " + str(iteration + 1) + " ||"
+        res = "iteration " + str(iteration + 1) + " \n\t"
         for key in self.values:
             # Avoid printing values logged as matrix
-            if len(self.values[key].shape) == 1:
-                res += " " + key + " " + str(self.values[key][iteration]) + " ||"
+            res += " " + key + " " + str(self.values[key][iteration]) + " \n\t"
         print(res)
 
     def plot(self, keys_plot, problem, show=True):
@@ -126,7 +125,7 @@ class Logger(object):
         sns.plt.legend(plotted_keys, loc='upper right')
         sns.plt.xlabel("Iterations")
         sns.plt.ylabel("Fitness")
-        sns.plt.title("RUN "+problem)
+        sns.plt.title("RUN " + problem)
         sns.plt.savefig('results/RUN' + problem + '.pdf')
         if show:
             sns.plt.show()

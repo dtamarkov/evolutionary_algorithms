@@ -7,7 +7,8 @@ It has a modular structure that makes easy to implement new operators for the se
 
 The EAL library includes:
 - [x] Single-run Logger
-- [ ] Multi-run Logger
+- [x] Multi-run Logger
+- [x] File logging and plotting
 - [x] Optimization Functions
 - [x] Built-in simple mutations
 - [x] Built-in simple crossovers
@@ -16,10 +17,10 @@ The EAL library includes:
 - [x] Genetic Algorithms process
 - [x] Evolutionary strategies process (simple version (1 sigma))
 - [ ] Evolutionary strategies (array of sigmas)
-- [ ] [A Grid-based Genetic Algorithm for Multimodal Real Function Optimization](http://www.ia.uned.es/~ejcarmona/publicaciones/[2012-Chaquet&Carmona]%20ECTA-2012.pdf) by Jose Chaquet and Enrique Carmona
+- [x] [A Grid-based Genetic Algorithm for Multimodal Real Function Optimization](http://www.ia.uned.es/~ejcarmona/publicaciones/[2012-Chaquet&Carmona]%20ECTA-2012.pdf) by Jose Chaquet and Enrique Carmona
 
 ## Optimization functions
-The optimization functions are adepted pieces of code obtained from the [web](https://www.sfu.ca/~ssurjano/)
+The optimization functions are adapted pieces of code, obtained from the [web](https://www.sfu.ca/~ssurjano/)
 
 In particular, the library has implemented the following functions:
 - **Ackley**
@@ -32,19 +33,17 @@ In particular, the library has implemented the following functions:
 - **Matyas**
 - **Powell**
 - **Zakharov**
+- **Sphere**
+- **Schewfel **
+- **Rastrigin**
 
-To implement:
-
-- Rastrigin
-- Schwefel
-
-An example of the functions plotted can be found [here](notebooks/functions_visualization.ipynb)
+An example of some of the functions plotted can be found [here](notebooks/functions_visualization.ipynb)
 
 ## EAL class
 The EAL class is a wrapper of the evolutionary process. It accepts a great number of parameters that
 set up the evolutionary algorithm.
 It puts together all the implemented features and operators and supports different
-evolutionary paradigms like: *Genetic Algorithms (ga)* and *Evolution Strategies (es)*.
+evolutionary paradigms like: *Genetic Algorithms (ga)*, *Evolution Strategies (es)* or *Grid-Based Genetic Algorithms (gga)*
 
 ### Initialization Parameters
 

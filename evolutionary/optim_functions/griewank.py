@@ -27,7 +27,16 @@ class Griewank(Function):
         self.minimize = minimize
         self.dim = None
         self.name = "Griewank"
-        super(self.__class__, self).__init__("Griewank")
+        self.pi_function = pi_function
+        self.m_function = m_function
+        if self.pi_function and self.m_function:
+            super(self.__class__, self).__init__("pi-m-griewank")
+        elif self.pi_function:
+            super(self.__class__, self).__init__("pi-griewank")
+        elif self.m_function:
+            super(self.__class__, self).__init__("m-griewank")
+        else:
+            super(self.__class__, self).__init__("griewank")
 
     def evaluate(self, population):
         """
@@ -40,17 +49,24 @@ class Griewank(Function):
         if len(population.shape) == 2:
             return np.apply_along_axis(self.evaluate, 1, population)
 
+        aux_population = population.copy()
+
+        if self.m_function:
+            aux_population = super(self.__class__, self).get_m_population(aux_population)
+
+        aux_population = aux_population - np.ones(len(aux_population)) * np.pi if self.pi_function else aux_population
+
         # Initialize vars
         add = 0.0
-        mult = 1.0
+        prod = 1.0
 
         # Compute the sum and the multiplication
         for i in range(len(population)):
             add += float(population[i]) ** 2
-            mult *= np.cos(float(population[i]) / np.sqrt(i + 1))
+            prod *= np.cos(float(population[i]) / np.sqrt(i + 1))
 
         # Return the value of the function
-        return 1 + add / 4000 - mult if self.minimize else -(1 + add / 4000 - mult)
+        return 1 + add / 4000 - prod if self.minimize else -(1 + add / 4000 - prod)
 
     def plot(self, d3=True, lower=-600, upper=600, samples=1000):
         """

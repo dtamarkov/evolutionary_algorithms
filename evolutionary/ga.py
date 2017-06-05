@@ -262,11 +262,11 @@ def _iterate(self, logger, upper, lower, fitness_function, ea_type, seed):
                         'std': np.std(fitness),
                         'worst': np.abs(np.max(fitness)) if self.minimization else np.abs(np.min(fitness)),
                         'best': np.abs(np.min(fitness)) if self.minimization else  np.abs(np.max(fitness)),
-                        'best_chromosome': population.chromosomes[best_idx]})
+                        'best_chromosome': population.chromosomes[best_idx]},
+                       count_it=False)
             if ea_type == 'gga':
                 logger.log({'best_s': population.s[best_idx],
-                            'best_alpha': population.alpha[best_idx]},
-                           count_it=False)
+                            'best_alpha': population.alpha[best_idx]})
 
             # Get the best chromosome of all the iterations
             idx_best = np.argmin(logger.get_log('best')) if iteration > 0 else 0
