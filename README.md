@@ -34,7 +34,7 @@ In particular, the library has implemented the following functions:
 - **Powell**
 - **Zakharov**
 - **Sphere**
-- **Schewfel **
+- **Schwefel**
 - **Rastrigin**
 
 An example of some of the functions plotted can be found [here](notebooks/functions_visualization.ipynb)

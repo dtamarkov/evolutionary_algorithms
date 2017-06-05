@@ -61,9 +61,9 @@ class Griewank(Function):
         prod = 1.0
 
         # Compute the sum and the multiplication
-        for i in range(len(population)):
-            add += float(population[i]) ** 2
-            prod *= np.cos(float(population[i]) / np.sqrt(i + 1))
+        for i in range(len(aux_population)):
+            add += float(aux_population[i]) ** 2
+            prod *= np.cos(float(aux_population[i]) / np.sqrt(i + 1))
 
         # Return the value of the function
         return 1 + add / 4000 - prod if self.minimize else -(1 + add / 4000 - prod)
